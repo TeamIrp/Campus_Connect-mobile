@@ -175,6 +175,7 @@ flutter:
     - assets/images/reward1.png
     - assets/images/trophy-star 1.png
     - assets/images/super 1.png
+    - assets/images/logout.png
 
   fonts:
     - family: Inter

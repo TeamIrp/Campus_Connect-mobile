@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -29,10 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: HomeAppBar(currentIndex: currentIndex),
-      ),
+      appBar:
+          currentIndex == 4
+              ? null
+              : PreferredSize(
+                preferredSize: const Size.fromHeight(70),
+                child: HomeAppBar(currentIndex: currentIndex),
+              ),
       body: _tabs[currentIndex],
       bottomNavigationBar: CustomBottomNavbar(
         currentIndex: currentIndex,
