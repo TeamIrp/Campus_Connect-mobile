@@ -15,6 +15,9 @@ class YourProfileScreen extends StatefulWidget {
 }
 
 class _YourProfileScreenState extends State<YourProfileScreen> {
+  List<File> _selectedImages = [];
+  List<String> _imagePaths = [];
+
   final List<String> _religions = [
     "Hinduism",
     "Islam",
@@ -33,12 +36,12 @@ class _YourProfileScreenState extends State<YourProfileScreen> {
   final LatLng eventLocation = LatLng(48.8566, 2.3522); // Paris coordinates
 
   File? _image;
-  final ImagePicker _picker = ImagePicker();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
   DateTime? _selectedDate;
   String? _selectedGender;
   String? _selectedRelationshipStatus;
@@ -48,6 +51,7 @@ class _YourProfileScreenState extends State<YourProfileScreen> {
   void initState() {
     super.initState();
     _loadSavedData();
+    _loadSavedImages();
   }
 
   Future<void> _loadSavedData() async {
@@ -112,6 +116,41 @@ class _YourProfileScreenState extends State<YourProfileScreen> {
     }
   }
 
+  Future<void> _saveImagePaths() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('selected_image_paths', _imagePaths);
+  }
+
+  Future<void> _pickMultipleImages() async {
+    final List<XFile>? images = await _picker.pickMultiImage();
+    if (images != null && images.isNotEmpty) {
+      setState(() {
+        final newFiles = images.map((xfile) => File(xfile.path)).toList();
+        _selectedImages.addAll(newFiles);
+        _imagePaths.addAll(images.map((xfile) => xfile.path));
+      });
+      await _saveImagePaths(); // Save updated list to local storage
+    }
+  }
+
+  Future<void> _loadSavedImages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final paths = prefs.getStringList('selected_image_paths') ?? [];
+    setState(() {
+      _imagePaths = paths;
+      _selectedImages = paths.map((path) => File(path)).toList();
+    });
+  }
+
+  Future<void> _clearSavedImages() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('selected_image_paths');
+    setState(() {
+      _selectedImages.clear();
+      _imagePaths.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).size.width * 0.05;
@@ -126,6 +165,8 @@ class _YourProfileScreenState extends State<YourProfileScreen> {
           children: [
             _buildProfilePicture(),
             const SizedBox(height: 40),
+            _buildImageGalleryScroller(),
+            const SizedBox(height: 20),
             _buildInputRow(
               "First Name",
               _firstNameController,
@@ -651,6 +692,47 @@ class _YourProfileScreenState extends State<YourProfileScreen> {
             color: Colors.white,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImageGalleryScroller() {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _selectedImages.length + 1,
+        itemBuilder: (context, index) {
+          if (index == _selectedImages.length) {
+            // "Add Image" tile
+            return GestureDetector(
+              onTap: _pickMultipleImages,
+              child: Container(
+                width: 100,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/add-image.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            );
+          }
+          // Existing selected image
+          return Container(
+            width: 100,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: FileImage(_selectedImages[index]),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

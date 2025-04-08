@@ -7,20 +7,15 @@ class MySubscriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Text(
-            'My Subscription',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+      children: const [
+        Text(
+          'My Subscription',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        // Replace this with your actual subscription UI
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Text("Subscription details go here."),
-        ),
+        SizedBox(height: 20),
+        Text("Subscription details go here."),
       ],
     );
   }
 }
+
