@@ -27,7 +27,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
           // Dotted border circle
           Positioned(
             top: screenHeight * 0.017, // ~122px
-            left: screenWidth / 2 - 106.5, // 213 / 2
+            left: screenWidth / 2 - 108.5,
             child: DottedBorder(
               borderType: BorderType.Circle,
               color: Colors.white,

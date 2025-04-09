@@ -7,6 +7,7 @@ import 'package:campus_connect/screens/profile/screens/buy_credit_screen.dart';
 import 'package:campus_connect/screens/profile/screens/my_subscription_screen.dart';
 import 'package:campus_connect/screens/profile/screens/privacy_screen.dart';
 import 'package:campus_connect/screens/profile/screens/badges_rewards_screen.dart';
+
 import '../../profile/widgets/logout_modal.dart';
 
 enum ProfileSection { main, mySubscription, privacy, badgesRewards }
@@ -23,24 +24,21 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
   final ImagePicker _picker = ImagePicker();
   ProfileSection selectedSection = ProfileSection.main;
 
-  void resetToMain() {
-    if (selectedSection != ProfileSection.main) {
-      setState(() {
-        selectedSection = ProfileSection.main;
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     _loadProfileImage();
   }
 
+  void resetToMain() {
+    setState(() {
+      selectedSection = ProfileSection.main;
+    });
+  }
+
   Future<void> _loadProfileImage() async {
     final prefs = await SharedPreferences.getInstance();
     final imagePath = prefs.getString('profile_image');
-
     if (imagePath != null) {
       final file = File(imagePath);
       if (await file.exists()) {
@@ -126,55 +124,40 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
   }
 
   Widget _buildMainProfileMenu() {
-    return Column(
-      children: [
-        const SizedBox(height: 40),
-        _buildProfilePicture(),
-        const SizedBox(height: 30),
-        _buildOptionTile(Icons.person, 'Your Profile', () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const YourProfileScreen()),
-          );
-        }),
-        _buildOptionTile(Icons.subscriptions, 'My Subscription', () {
-          setState(() {
-            selectedSection = ProfileSection.mySubscription;
-          });
-        }),
-        _buildOptionTile(Icons.privacy_tip, 'Privacy', () {
-          setState(() {
-            selectedSection = ProfileSection.privacy;
-          });
-        }),
-        _buildOptionTile(Icons.credit_score, 'Buy Credit', () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const BuyCreditScreen()),
-          );
-        }),
-        _buildOptionTile(Icons.emoji_events, 'Badges and Rewards', () {
-          setState(() {
-            selectedSection = ProfileSection.badgesRewards;
-          });
-        }),
-      ],
-    );
-  }
-
-  Widget _buildBackButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 40, left: 16),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 28),
-          onPressed: () {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          _buildProfilePicture(),
+          const SizedBox(height: 30),
+          _buildOptionTile(Icons.person, 'Your Profile', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const YourProfileScreen()),
+            );
+          }),
+          _buildOptionTile(Icons.subscriptions, 'My Subscription', () {
             setState(() {
-              selectedSection = ProfileSection.main;
+              selectedSection = ProfileSection.mySubscription;
             });
-          },
-        ),
+          }),
+          _buildOptionTile(Icons.privacy_tip, 'Privacy', () {
+            setState(() {
+              selectedSection = ProfileSection.privacy;
+            });
+          }),
+          _buildOptionTile(Icons.credit_score, 'Buy Credit', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const BuyCreditScreen()),
+            );
+          }),
+          _buildOptionTile(Icons.emoji_events, 'Badges and Rewards', () {
+            setState(() {
+              selectedSection = ProfileSection.badgesRewards;
+            });
+          }),
+        ],
       ),
     );
   }
@@ -234,18 +217,14 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
     );
   }
 
-  Widget _buildInnerContent() {
+  Widget _buildBodyContent() {
     switch (selectedSection) {
       case ProfileSection.mySubscription:
-        return Column(
-          children: [_buildBackButton(), const MySubscriptionScreen()],
-        );
+        return const MySubscriptionScreen();
       case ProfileSection.privacy:
-        return Column(children: [_buildBackButton(), const PrivacyScreen()]);
+        return const PrivacyScreen();
       case ProfileSection.badgesRewards:
-        return Column(
-          children: [_buildBackButton(), const BadgesRewardsScreen()],
-        );
+        return const BadgesRewardsScreen();
       case ProfileSection.main:
       default:
         return _buildMainProfileMenu();
@@ -263,7 +242,7 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
                 child: _buildCustomAppBar(),
               )
               : null,
-      body: SingleChildScrollView(child: _buildInnerContent()),
+      body: SizedBox.expand(child: _buildBodyContent()),
     );
   }
 }
@@ -272,18 +251,7 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
 
 
 
-
-
-
-
-
 // ----------------------------------------------------------
-
-
-
-
-
-
 
 
 

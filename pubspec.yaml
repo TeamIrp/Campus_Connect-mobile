@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   cupertino_icons: ^1.0.8
   provider: ^6.0.5
   flutter_map: ^6.0.0
@@ -45,7 +46,7 @@ dependencies:
   toastification: ^1.1.2
   shared_preferences: ^2.2.2
   dotted_border: ^2.0.0
-
+  device_preview: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -180,6 +181,12 @@ flutter:
     - assets/images/logout.png
     - assets/images/add-image.png
     - assets/images/buy-credit_star.png
+    - assets/images/credit-balance.png
+    - assets/images/apple_pay.png
+    - assets/images/credit_card.png
+    - assets/images/google_wallet.png
+    - assets/images/paypal.png
+    - assets/images/rounded_right_tick.png
 
   fonts:
     - family: Inter
