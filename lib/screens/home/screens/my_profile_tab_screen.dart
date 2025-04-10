@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:campus_connect/screens/profile/screens/your_profile_screen.dart';
+import 'package:campus_connect/screens/profile/screens/my_profile_screen.dart';
 import 'package:campus_connect/screens/profile/screens/buy_credit_screen.dart';
 import 'package:campus_connect/screens/profile/screens/my_subscription_screen.dart';
 import 'package:campus_connect/screens/profile/screens/privacy_screen.dart';
@@ -261,7 +261,7 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
 // import 'package:flutter/material.dart';
 // import 'package:image_picker/image_picker.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:campus_connect/screens/profile/screens/your_profile_screen.dart';
+// import 'package:campus_connect/screens/profile/screens/my_profile_screen.dart';
 // import 'package:campus_connect/screens/profile/screens/buy_credit_screen.dart';
 // import 'package:campus_connect/screens/profile/screens/my_subscription_screen.dart';
 // import 'package:campus_connect/screens/profile/screens/privacy_screen.dart';

@@ -187,6 +187,14 @@ flutter:
     - assets/images/google_wallet.png
     - assets/images/paypal.png
     - assets/images/rounded_right_tick.png
+    - assets/images/badge2.png
+    - assets/images/badge3.png
+    - assets/images/badge4.png
+    - assets/images/reward2.png
+    - assets/images/reward3.png
+    - assets/images/badge_icon.png
+    - assets/images/reward_icon.png
+    - assets/images/award_blur_1.png
 
   fonts:
     - family: Inter

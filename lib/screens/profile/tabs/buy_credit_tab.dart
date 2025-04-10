@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/subscription_summary_screen.dart';
 
 class BuyCreditTab extends StatefulWidget {
   const BuyCreditTab({super.key});
@@ -53,7 +54,10 @@ class _BuyCreditTabState extends State<BuyCreditTab> {
                     child: Container(
                       width: 190,
                       height: 80,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 3,
+                      ),
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -145,6 +149,7 @@ class _BuyCreditTabState extends State<BuyCreditTab> {
               ),
             ),
             const SizedBox(height: 12),
+
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -155,77 +160,99 @@ class _BuyCreditTabState extends State<BuyCreditTab> {
                   BoxShadow(color: Color(0x40000000), blurRadius: 4),
                 ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(
-                  4,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          margin: const EdgeInsets.only(top: 2, right: 8),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF1D97D4),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Expanded(
-                          child: Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight:
+                          MediaQuery.of(context).size.height *
+                          0.4, // Optional: limit max height
+                    ),
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          4,
+                          (index) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  margin: const EdgeInsets.only(
+                                    top: 2,
+                                    right: 8,
+                                  ),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF1D97D4),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: Text(
+                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
+
             const SizedBox(height: 24),
             Center(
               child: SizedBox(
                 width: 383.33,
                 height: 52,
                 child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder:
+                            (context, animation, secondaryAnimation) =>
+                                const SubscriptionSummaryScreen(),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE8B903),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(7),
                     ),
-                    padding: const EdgeInsets.fromLTRB(15, 10, 10, 10),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 15,
+                    ),
+                    elevation: 0,
                   ),
-                  onPressed: () {
-                    // TODO: Replace with your actual navigation
-                    Navigator.pushNamed(
-                      context,
-                      '/summary',
-                    ); // '#09.04 Summary'
-                  },
-                  child: const Center(
-                    child: Text(
-                      'Purchase',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        height: 1.0,
-                        letterSpacing: 0,
-                        color: Colors.white,
-                      ),
+                  child: const Text(
+                    'Purchase',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
                   ),
                 ),

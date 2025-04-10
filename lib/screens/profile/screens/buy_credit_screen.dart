@@ -44,7 +44,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
           // Gradient circle
           Positioned(
             top: screenHeight * 0.03,
-            left: (screenWidth / 2) - 99.5, // 199 / 2
+            left: (screenWidth / 2) - 99.5, // Centering the 199 width circle
             child: Container(
               width: 199,
               height: 199,
@@ -54,6 +54,44 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
                   colors: [Color(0xFFFFFFFF), Color(0xFFFFF2E1)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top:
+                      MediaQuery.of(context).size.height *
+                      0.04, // 4% of screen height
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Text(
+                      '950',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 28,
+                        height: 1.0,
+                        letterSpacing: 0,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 8), // spacing between texts
+                    Text(
+                      'Your Credit Points',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                        height: 1.0,
+                        letterSpacing: 0,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
             ),
