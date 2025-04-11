@@ -43,10 +43,11 @@ dependencies:
   flutter_svg: ^2.0.9
   image_picker: ^1.0.4
   getwidget: ^4.0.0
-  toastification: ^1.1.2
+  toastification: ^1.1.0
   shared_preferences: ^2.2.2
   dotted_border: ^2.0.0
   device_preview: ^1.2.0
+
 
 dev_dependencies:
   flutter_test:
@@ -195,6 +196,8 @@ flutter:
     - assets/images/badge_icon.png
     - assets/images/reward_icon.png
     - assets/images/award_blur_1.png
+    - assets/images/outlined_green_tick.png
+    - assets/images/error_icon.png
 
   fonts:
     - family: Inter

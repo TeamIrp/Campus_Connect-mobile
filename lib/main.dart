@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:campus_connect/screens/login_screen.dart';
+import 'package:campus_connect/screens/authentication/screens/login_screen.dart';
 import 'package:campus_connect/screens/splash_screen.dart';
 import 'package:campus_connect/theme/app_theme.dart';
 import 'package:hive/hive.dart';

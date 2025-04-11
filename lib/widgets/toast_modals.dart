@@ -75,7 +75,7 @@ void showProfileSuccessToast(BuildContext context) {
     alignment: Alignment.bottomCenter,
     type: ToastificationType.success,
     autoCloseDuration: const Duration(milliseconds: 4000),
-    backgroundColor: const Color(0xFF14AE5C), // ✅ Green background
+    backgroundColor: const Color(0xFF14AE5C),
     showProgressBar: true,
     progressBarTheme: const ProgressIndicatorThemeData(
       color: Color(0xFF54D38F), // ✅ Progress bar color
@@ -87,7 +87,7 @@ void showProfileSuccessToast(BuildContext context) {
       height: 40,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white, // ✅ Icon circle background
+        color: Colors.white,
       ),
       child: Center(
         child: SvgPicture.asset(
@@ -119,13 +119,123 @@ void showProfileSuccessToast(BuildContext context) {
     ),
     closeButtonShowType: CloseButtonShowType.always,
 
-    padding: const EdgeInsets.only(
-      left: 16,
-      right: 16,
-      top: 16,
-      bottom: 16, // ✅ No gap between progress bar and toast
-    ),
+    padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
   );
 }
 
+
+
+
+// -----------------------------------------------------------------------------
+//
+//
+// import 'package:flutter/material.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+//
+// class CustomToastContent extends StatefulWidget {
+//   final String title;
+//   final String message;
+//   final Color backgroundColor;
+//   final Widget icon;
+//
+//   const CustomToastContent({
+//     super.key,
+//     required this.title,
+//     required this.message,
+//     required this.backgroundColor,
+//     required this.icon,
+//   });
+//
+//   @override
+//   State<CustomToastContent> createState() => _CustomToastContentState();
+// }
+//
+// class _CustomToastContentState extends State<CustomToastContent>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _controller;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       duration: const Duration(seconds: 4),
+//       vsync: this,
+//     )..forward();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 100, // Increased height for progress bar space
+//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//       decoration: BoxDecoration(
+//         color: widget.backgroundColor,
+//         borderRadius: BorderRadius.circular(10),
+//       ),
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Row(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               widget.icon,
+//               const SizedBox(width: 10),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       widget.title,
+//                       style: const TextStyle(
+//                         fontFamily: 'Inter',
+//                         fontWeight: FontWeight.w600,
+//                         fontSize: 14,
+//                         color: Colors.white,
+//                         decoration: TextDecoration.none,
+//                       ),
+//                     ),
+//                     const SizedBox(height: 4),
+//                     Text(
+//                       widget.message,
+//                       style: const TextStyle(
+//                         fontFamily: 'Inter',
+//                         fontWeight: FontWeight.w400,
+//                         fontSize: 14,
+//                         color: Colors.white,
+//                         decoration: TextDecoration.none,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 5),
+//           AnimatedBuilder(
+//             animation: _controller,
+//             builder: (context, child) {
+//               return ClipRRect(
+//                 borderRadius: BorderRadius.circular(0),
+//                 child: LinearProgressIndicator(
+//                   value: _controller.value,
+//                   minHeight: 10,
+//                   backgroundColor: Colors.transparent,
+//                   valueColor: const AlwaysStoppedAnimation<Color>(
+//                     Color(0xFF54D38F),
+//                   ),
+//                 ),
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

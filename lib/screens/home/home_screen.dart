@@ -57,15 +57,19 @@
 
 
 
-
 // ---------------------------------------------------------------------------
 
-import 'package:campus_connect/screens/home/screens/explore_tab_screen.dart';
-import 'package:campus_connect/screens/home/screens/home_tab_screen.dart';
-import 'package:campus_connect/screens/home/screens/my_chats_tab_screen.dart';
-import 'package:campus_connect/screens/home/screens/my_profile_tab_screen.dart';
-import 'package:campus_connect/screens/home/screens/publication_tab_screen.dart';
-import 'package:campus_connect/screens/home/widgets/custom_bottom_navbar.dart';
+
+
+
+
+
+import 'package:campus_connect/screens/explore/explore_tab_screen.dart';
+import 'package:campus_connect/screens/home/home_tab_screen.dart';
+import 'package:campus_connect/screens/chat/tab/my_chats_tab_screen.dart';
+import 'package:campus_connect/screens/my_profile/my_profile_tab_screen.dart';
+import 'package:campus_connect/screens/publication/publication_tab_screen.dart';
+import 'package:campus_connect/widgets/custom_bottom_navbar.dart';
 import 'package:campus_connect/screens/home/widgets/home_appbar.dart';
 import 'package:flutter/material.dart';
 
@@ -95,13 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      appBar:
-          currentIndex == 4
-              ? null
-              : PreferredSize(
-                preferredSize: const Size.fromHeight(70),
-                child: HomeAppBar(currentIndex: currentIndex),
-              ),
+      appBar: (currentIndex == 0 || currentIndex == 4)
+          ? null
+          : PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: HomeAppBar(currentIndex: currentIndex),
+      ),
       body: tabs[currentIndex],
       bottomNavigationBar: CustomBottomNavbar(
         currentIndex: currentIndex,
