@@ -8,6 +8,7 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
+  // --- State variables ---
   RangeValues _distanceRange = const RangeValues(0, 25);
   RangeValues _ageRange = const RangeValues(18, 50);
   String _selectedGender = "";
@@ -18,6 +19,7 @@ class _FilterScreenState extends State<FilterScreen> {
   String _selectedReligion = "";
   List<String> _selectedInterests = [];
 
+  // --- Options ---
   final List<String> interests = [
     "Cricket",
     "Music",
@@ -36,19 +38,40 @@ class _FilterScreenState extends State<FilterScreen> {
   final List<String> cities = ["Delhi", "Mumbai", "Chennai", "Bangalore"];
   final List<String> regions = ["North", "South", "East", "West"];
 
+  // --- Helpers ---
+  Widget _verticalSpacing([double height = 20]) => SizedBox(height: height);
+
   void _toggleInterest(String interest) {
     setState(() {
-      _selectedInterests.contains(interest)
-          ? _selectedInterests.remove(interest)
-          : _selectedInterests.add(interest);
+      if (_selectedInterests.contains(interest)) {
+        _selectedInterests.remove(interest);
+      } else {
+        _selectedInterests.add(interest);
+      }
     });
   }
 
-  Widget _verticalSpacing([double height = 20]) => SizedBox(height: height);
+  /// Resets all filters to their initial state.
+  void _resetFilters() {
+    setState(() {
+      _distanceRange = const RangeValues(0, 25);
+      _ageRange = const RangeValues(18, 60);
+      _selectedGender = "";
+      _selectedCity = "";
+      _selectedRegion = "";
+      _relationshipSought = "";
+      _profileVerification = "";
+      _selectedReligion = "";
+      _selectedInterests.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final isMobile = MediaQuery
+        .of(context)
+        .size
+        .width < 600;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,7 +80,7 @@ class _FilterScreenState extends State<FilterScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, false),
         ),
         centerTitle: true,
         title: const Text(
@@ -85,17 +108,17 @@ class _FilterScreenState extends State<FilterScreen> {
                       _distanceRange,
                       0,
                       25,
-                      (val) => setState(() => _distanceRange = val),
-                      "km",
+                          (val) => setState(() => _distanceRange = val),
+                      'km',
                     ),
                     _verticalSpacing(),
                     _buildRangeSliderBox(
                       "Age Sought",
                       _ageRange,
                       18,
-                      50,
-                      (val) => setState(() => _ageRange = val),
-                      "yrs",
+                      60,
+                          (val) => setState(() => _ageRange = val),
+                      'yrs',
                     ),
                     _verticalSpacing(),
                     _buildGenderSelection(),
@@ -129,12 +152,10 @@ class _FilterScreenState extends State<FilterScreen> {
                     _verticalSpacing(30),
                     Row(
                       children: [
-                        _buildButton(
-                          "Reset",
-                          Colors.black,
-                              () => Navigator.pop(context),
-                        ),
+                        // Reset: now clears state in-place
+                        _buildButton("Reset", Colors.black, _resetFilters),
                         const SizedBox(width: 16),
+                        // Apply: pop with true
                         _buildButton(
                           "Apply",
                           const Color(0xFF1D97D4),
@@ -152,6 +173,8 @@ class _FilterScreenState extends State<FilterScreen> {
       ),
     );
   }
+
+  // --- UI Components ---
 
   Widget _buildButton(String label, Color color, VoidCallback onTap) {
     return Expanded(
@@ -174,14 +197,12 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
-  Widget _buildRangeSliderBox(
-    String title,
-    RangeValues values,
-    double min,
-    double max,
-    ValueChanged<RangeValues> onChanged,
-    String unit,
-  ) {
+  Widget _buildRangeSliderBox(String title,
+      RangeValues values,
+      double min,
+      double max,
+      ValueChanged<RangeValues> onChanged,
+      String unit,) {
     return _buildBox(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +212,7 @@ class _FilterScreenState extends State<FilterScreen> {
             values: values,
             min: min,
             max: max,
-            divisions: (max - min).toInt(),
+            divisions: null,
             labels: RangeLabels(
               '${values.start.round()}$unit',
               '${values.end.round()}$unit',
@@ -202,8 +223,28 @@ class _FilterScreenState extends State<FilterScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${values.start.round()}$unit', style: _valueTextStyle()),
-              Text('${values.end.round()}$unit', style: _valueTextStyle()),
+              Text(
+                '${values.start.round()}$unit',
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  height: 1.0,
+                  letterSpacing: 0.0,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                '${values.end.round()}$unit',
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  height: 1.0,
+                  letterSpacing: 0.0,
+                  color: Colors.black,
+                ),
+              ),
             ],
           ),
         ],
@@ -221,15 +262,16 @@ class _FilterScreenState extends State<FilterScreen> {
           Wrap(
             spacing: 10,
             children:
-                ["Women", "Men"]
-                    .map(
-                      (label) => _buildToggleButton(
-                        label,
-                        _selectedGender,
-                        onTap: () => setState(() => _selectedGender = label),
-                      ),
-                    )
-                    .toList(),
+            ["Women", "Men"]
+                .map(
+                  (label) =>
+                  _buildToggleButton(
+                    label,
+                    _selectedGender,
+                    onTap: () => setState(() => _selectedGender = label),
+                  ),
+            )
+                .toList(),
           ),
         ],
       ),
@@ -264,16 +306,17 @@ class _FilterScreenState extends State<FilterScreen> {
             spacing: 10,
             runSpacing: 10,
             children:
-                religions
-                    .map(
-                      (religion) => _buildToggleButton(
-                        religion,
-                        _selectedReligion,
-                        onTap:
-                            () => setState(() => _selectedReligion = religion),
-                      ),
-                    )
-                    .toList(),
+            religions
+                .map(
+                  (religion) =>
+                  _buildToggleButton(
+                    religion,
+                    _selectedReligion,
+                    onTap:
+                        () => setState(() => _selectedReligion = religion),
+                  ),
+            )
+                .toList(),
           ),
         ],
       ),
@@ -292,7 +335,7 @@ class _FilterScreenState extends State<FilterScreen> {
             _selectedCity,
             cities,
             Icons.location_on,
-            (val) => setState(() => _selectedCity = val!),
+                (val) => setState(() => _selectedCity = val!),
           ),
           _verticalSpacing(16),
           Text("Region", style: _titleTextStyle()),
@@ -302,26 +345,24 @@ class _FilterScreenState extends State<FilterScreen> {
             _selectedRegion,
             regions,
             null,
-            (val) => setState(() => _selectedRegion = val!),
+                (val) => setState(() => _selectedRegion = val!),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDropdown(
-    String hint,
-    String value,
-    List<String> items,
-    IconData? icon,
-    ValueChanged<String?> onChanged,
-  ) {
+  Widget _buildDropdown(String hint,
+      String value,
+      List<String> items,
+      IconData? icon,
+      ValueChanged<String?> onChanged,) {
     return DropdownButtonFormField<String>(
       value: value.isEmpty ? null : value,
       icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
       decoration: InputDecoration(
         prefixIcon:
-            icon != null ? Icon(icon, color: const Color(0xFF1D97D4)) : null,
+        icon != null ? Icon(icon, color: const Color(0xFF1D97D4)) : null,
         hintText: hint,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
@@ -330,9 +371,9 @@ class _FilterScreenState extends State<FilterScreen> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       items:
-          items
-              .map((item) => DropdownMenuItem(value: item, child: Text(item)))
-              .toList(),
+      items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
       onChanged: onChanged,
     );
   }
@@ -346,9 +387,13 @@ class _FilterScreenState extends State<FilterScreen> {
         decoration: BoxDecoration(
           color: selected ? const Color(0xFF1D97D4) : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? const Color(0xFF1D97D4) : Colors.black26,
-          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x66000000), // #00000040
+              blurRadius: 4,
+              offset: Offset(0, 0),
+            ),
+          ],
         ),
         child: Text(
           interest,
@@ -361,11 +406,10 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
-  Widget _buildToggleButton(
-    String label,
-    String selected, {
-    VoidCallback? onTap,
-  }) {
+  Widget _buildToggleButton(String label,
+      String selected, {
+        VoidCallback? onTap,
+      }) {
     final isSelected = label == selected;
     return GestureDetector(
       onTap: onTap,
@@ -374,9 +418,16 @@ class _FilterScreenState extends State<FilterScreen> {
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF1D97D4) : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? const Color(0xFF1D97D4) : Colors.black26,
-          ),
+          // border: Border.all(
+          //   color: isSelected ? const Color(0xFF1D97D4) : Colors.black26,
+          // ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0x66000000), // #00000040 in hex with opacity
+              blurRadius: 4,
+              offset: Offset(0, 0),
+            ),
+          ],
         ),
         child: Text(
           label,
@@ -395,7 +446,19 @@ class _FilterScreenState extends State<FilterScreen> {
     required String selected,
     required Function(String) onSelect,
   }) {
-    return _buildBox(
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: const [
+          BoxShadow(
+            color: const Color(0x66000000), // #00000040 in hex with opacity
+            blurRadius: 4,
+            offset: Offset(0, 0),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -405,15 +468,16 @@ class _FilterScreenState extends State<FilterScreen> {
             spacing: 10,
             runSpacing: 10,
             children:
-                options
-                    .map(
-                      (option) => _buildToggleButton(
-                        option,
-                        selected,
-                        onTap: () => onSelect(option),
-                      ),
-                    )
-                    .toList(),
+            options
+                .map(
+                  (option) =>
+                  _buildToggleButton(
+                    option,
+                    selected,
+                    onTap: () => onSelect(option),
+                  ),
+            )
+                .toList(),
           ),
         ],
       ),

@@ -4,7 +4,9 @@ import '../../widgets/reward_modal.dart';
 import '../../widgets/reward_blur_modal.dart'; // <-- Add this import
 
 class BadgesRewardsScreen extends StatelessWidget {
-  const BadgesRewardsScreen({super.key});
+  final VoidCallback onBack;
+
+  const BadgesRewardsScreen({super.key, required this.onBack});
 
   void _showBadgeModal(BuildContext context) {
     showDialog(context: context, builder: (context) => const BadgeModal());
@@ -37,12 +39,9 @@ class BadgesRewardsScreen extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, size: 24, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
+            onPressed: onBack,
           ),
         ),
       ),
