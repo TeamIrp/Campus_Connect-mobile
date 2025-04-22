@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/badge_modal.dart';
 import '../../widgets/reward_modal.dart';
-import '../../widgets/reward_blur_modal.dart'; // <-- Add this import
+import '../../widgets/reward_blur_modal.dart';
 
 class BadgesRewardsScreen extends StatelessWidget {
   final VoidCallback onBack;

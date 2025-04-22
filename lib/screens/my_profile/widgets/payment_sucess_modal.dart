@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 void showPaymentSuccessModal(BuildContext context) {

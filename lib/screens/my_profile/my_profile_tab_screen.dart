@@ -237,7 +237,6 @@ class MyProfileTabScreenState extends State<MyProfileTabScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
