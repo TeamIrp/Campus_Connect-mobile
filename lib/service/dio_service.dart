@@ -3,10 +3,6 @@ import 'package:dio/dio.dart';
 
 import 'contant_url.dart';
 
-
-
-
-
 class DioService {
   final dio = createDio();
   final tokenDio = Dio(BaseOptions(baseUrl: ConstantUrl.baseUrl));
@@ -18,16 +14,16 @@ class DioService {
   factory DioService() => _singleton;
 
   static Dio createDio() {
-    var dio = Dio(BaseOptions(
-      baseUrl: ConstantUrl.baseUrl,
-      receiveTimeout: const Duration(seconds: 50),
-      connectTimeout: const Duration(seconds: 50),
-      sendTimeout: const Duration(seconds: 50),
-    ));
+    var dio = Dio(
+      BaseOptions(
+        baseUrl: ConstantUrl.baseUrl,
+        receiveTimeout: const Duration(seconds: 50),
+        connectTimeout: const Duration(seconds: 50),
+        sendTimeout: const Duration(seconds: 50),
+      ),
+    );
 
-    dio.interceptors.addAll({
-      AppInterceptors(),
-    });
+    dio.interceptors.addAll({AppInterceptors()});
     return dio;
   }
 }
@@ -35,7 +31,9 @@ class DioService {
 class AppInterceptors extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    log('REQUEST[${options.method}] => PATH: ${options.path} => DATA${options.data}');
+    log(
+      'REQUEST[${options.method}] => PATH: ${options.path} => DATA${options.data}',
+    );
     super.onRequest(options, handler);
   }
 

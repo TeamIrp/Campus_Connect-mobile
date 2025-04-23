@@ -39,5 +39,4 @@ class ConstantUrl {
   static const String users_current_subscription = "users_current_subscription";
   static const String mark_as_sold_users_list = "mark_as_sold_users_list";
   static const String mark_as_sold = "mark_as_sold";
-
 }

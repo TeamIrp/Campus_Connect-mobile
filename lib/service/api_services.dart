@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,13 +9,9 @@ import 'contant_url.dart';
 import 'dio_service.dart';
 
 class ApiService {
-
   ApiService._internal();
-
   static final _apiService = ApiService._internal();
-
   factory ApiService() => _apiService;
-
 
   static Future<Registration> getRegister(BuildContext context,String lang, String firstname, String lastname,  String emailAddress, String mobileNo,
       String password, String gender, String dob, String relationshipStatus , String  typeOfRelationship , String  currentIntendedOccupation ,
@@ -63,7 +58,7 @@ class ApiService {
             isError: true
         );
       }
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       String errorMessage;
       switch (e.type) {
         case DioExceptionType.connectionTimeout:
