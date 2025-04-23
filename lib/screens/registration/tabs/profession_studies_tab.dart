@@ -1,64 +1,48 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/profession_studies_provider.dart';
 
 class ProfessionStudiesTab extends StatefulWidget {
   const ProfessionStudiesTab({super.key});
 
   @override
-  _ProfessionStudiesTabState createState() => _ProfessionStudiesTabState();
+  State<ProfessionStudiesTab> createState() => _ProfessionStudiesTabState();
 }
 
 class _ProfessionStudiesTabState extends State<ProfessionStudiesTab> {
-  final TextEditingController _occupationController = TextEditingController();
-  final TextEditingController _academicFieldController = TextEditingController();
-  final TextEditingController _universityController = TextEditingController();
-  String? _selectedLevel;
-  String? _imagePath;
+  final _occupationController = TextEditingController();
+  final _academicFieldController = TextEditingController();
+  final _universityController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _occupationController.text = prefs.getString('occupation') ?? '';
-      _academicFieldController.text = prefs.getString('academicField') ?? '';
-      _selectedLevel = prefs.getString('selectedLevel');
-      _universityController.text = prefs.getString('university') ?? '';
-      _imagePath = prefs.getString('imagePath');
+    final provider = Provider.of<ProfessionStudiesProvider>(
+      context,
+      listen: false,
+    );
+    provider.loadData().then((_) {
+      _occupationController.text = provider.occupation ?? '';
+      _academicFieldController.text = provider.academicField ?? '';
+      _universityController.text = provider.university ?? '';
     });
   }
 
-  Future<void> _saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('occupation', _occupationController.text);
-    await prefs.setString('academicField', _academicFieldController.text);
-    await prefs.setString('selectedLevel', _selectedLevel ?? '');
-    await prefs.setString('university', _universityController.text);
-    if (_imagePath != null) {
-      await prefs.setString('imagePath', _imagePath!);
-    }
-  }
-
   Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() {
-        _imagePath = image.path;
-      });
-      _saveData(); // Save image path persistently
+      Provider.of<ProfessionStudiesProvider>(
+        context,
+        listen: false,
+      ).updateImagePath(image.path);
     }
   }
 
   @override
   void dispose() {
-    _saveData();
     _occupationController.dispose();
     _academicFieldController.dispose();
     _universityController.dispose();
@@ -67,6 +51,7 @@ class _ProfessionStudiesTabState extends State<ProfessionStudiesTab> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProfessionStudiesProvider>(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -77,23 +62,34 @@ class _ProfessionStudiesTabState extends State<ProfessionStudiesTab> {
               children: [
                 _buildLabelWithOptional("Current or Intended Occupation"),
                 const SizedBox(height: 10),
-                _buildTextField(_occupationController, "Enter"),
+                _buildTextField(
+                  _occupationController,
+                  "Enter",
+                  provider.updateOccupation,
+                ),
 
                 const SizedBox(height: 20),
                 _buildLabelWithAsterisk("Academic Field"),
                 const SizedBox(height: 10),
-                _buildTextField(_academicFieldController, "Enter"),
+                _buildTextField(
+                  _academicFieldController,
+                  "Enter",
+                  provider.updateAcademicField,
+                ),
 
                 const SizedBox(height: 20),
                 _buildLabelWithAsterisk("Level of Studies"),
                 const SizedBox(height: 10),
-                _buildDropdownField(),
+                _buildDropdownField(provider),
 
                 const SizedBox(height: 20),
                 _buildLabelWithAsterisk("University or School Attended"),
                 const SizedBox(height: 10),
-                _buildTextField(_universityController, "Enter"),
-
+                _buildTextField(
+                  _universityController,
+                  "Enter",
+                  provider.updateUniversity,
+                ),
               ],
             ),
           ),
@@ -102,156 +98,89 @@ class _ProfessionStudiesTabState extends State<ProfessionStudiesTab> {
     );
   }
 
-  Widget _buildLabelWithOptional(String label) {
-    return Row(
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-            height: 1.0,
-          ),
-        ),
-        const SizedBox(width: 5),
-        const Text(
-          "(Optional)",
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.italic,
-            fontSize: 12,
-            height: 1.0,
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildLabelWithOptional(String label) => Row(
+    children: [
+      Text(label, style: _labelStyle()),
+      const SizedBox(width: 5),
+      Text("(Optional)", style: _optionalStyle()),
+    ],
+  );
 
-  Widget _buildLabelWithAsterisk(String label) {
-    return Row(
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-            height: 1.0,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(width: 5),
-        const Text(
-          "*",
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-            height: 1.0,
-            color: Color(0xFFD31F34),
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildLabelWithAsterisk(String label) => Row(
+    children: [
+      Text(label, style: _labelStyle()),
+      const SizedBox(width: 5),
+      const Text("*", style: TextStyle(color: Color(0xFFD31F34))),
+    ],
+  );
 
-  Widget _buildTextField(TextEditingController controller, String hintText) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String hintText,
+    Function(String) onChanged,
+  ) {
     return SizedBox(
       width: 360,
       height: 52,
       child: TextField(
         controller: controller,
         cursorColor: Colors.black,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 1.0,
-            color: Color(0xFF797979),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF797979)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.black),
-          ),
-        ),
+        decoration: _inputDecoration(hintText),
         style: const TextStyle(color: Colors.black),
-        onChanged: (_) => _saveData(),
+        onChanged: onChanged,
       ),
     );
   }
 
-  Widget _buildDropdownField() {
+  Widget _buildDropdownField(ProfessionStudiesProvider provider) {
     List<String> levels = ["Undergraduate", "Graduate", "Doctorate"];
-
-    // Make sure _selectedLevel is either null or a valid value from the list
-    String? validSelected = levels.contains(_selectedLevel) ? _selectedLevel : null;
+    String? selected =
+        levels.contains(provider.levelOfStudies)
+            ? provider.levelOfStudies
+            : null;
 
     return SizedBox(
       width: 360,
       height: 52,
       child: DropdownButtonFormField<String>(
-        value: validSelected,
-        onChanged: (value) {
-          setState(() {
-            _selectedLevel = value;
-          });
-        },
-        items: levels.map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFF797979)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.black),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-          hintText: 'Select',
-          hintStyle: const TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 1.0,
-            letterSpacing: 0,
-            color: Color(0xFF797979),
-          ),
-        ),
+        value: selected,
+        onChanged: provider.updateLevelOfStudies,
+        items:
+            levels
+                .map(
+                  (level) => DropdownMenuItem(value: level, child: Text(level)),
+                )
+                .toList(),
+        decoration: _inputDecoration("Select"),
         icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF797979)),
       ),
     );
   }
 
+  TextStyle _labelStyle() => const TextStyle(
+    fontFamily: 'Inter',
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  );
 
-  Widget _buildImagePicker() {
-    return GestureDetector(
-      onTap: _pickImage,
-      child: Container(
-        width: 360,
-        height: 200,
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFF797979)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: _imagePath == null
-            ? const Center(child: Text("Tap to Upload Image"))
-            : Image.file(File(_imagePath!), fit: BoxFit.cover),
-      ),
-    );
-  }
+  TextStyle _optionalStyle() => const TextStyle(
+    fontFamily: 'Inter',
+    fontStyle: FontStyle.italic,
+    fontSize: 12,
+  );
+
+  InputDecoration _inputDecoration(String hint) => InputDecoration(
+    hintText: hint,
+    hintStyle: const TextStyle(color: Color(0xFF797979)),
+    filled: true,
+    fillColor: Colors.white,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: const BorderSide(color: Color(0xFF797979)),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: const BorderSide(color: Colors.black),
+    ),
+  );
 }

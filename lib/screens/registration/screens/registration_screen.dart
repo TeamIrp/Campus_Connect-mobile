@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/academic_project_provider.dart';
+import '../../../providers/basic_details_provider.dart';
+import '../../../providers/credentials_provider.dart';
+import '../../../providers/profession_studies_provider.dart';
+import '../../../providers/professional_project_provider.dart';
 import '../../authentication/screens/login_screen.dart';
 import '../tabs/academic_project_tab.dart';
 import '../tabs/basic_details_tab.dart';
@@ -36,25 +42,104 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ];
 
   void _nextTab() {
-    if (_currentIndex < _tabs.length - 1) {
-      setState(() {
-        _currentIndex++;
-      });
-    } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const ToastModal(),
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final basicProvider = Provider.of<BasicDetailsProvider>(
+        context,
+        listen: false,
+      );
+      final professionStudiesProvider = Provider.of<ProfessionStudiesProvider>(
+        context,
+        listen: false,
+      );
+      final academicProvider = Provider.of<AcademicProjectProvider>(
+        context,
+        listen: false,
+      );
+      final projectProvider = Provider.of<ProfessionalProjectProvider>(
+        context,
+        listen: false,
+      );
+      final credentialsProvider = Provider.of<CredentialsProvider>(
+        context,
+        listen: false,
       );
 
-      Future.delayed(const Duration(milliseconds: 4000), () {
-        Navigator.of(context).pop(); // remove toast
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+      if (_currentIndex == 0 && !basicProvider.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Please complete all required fields in Basic Details.',
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
-      });
-    }
+        return;
+      }
+
+      if (_currentIndex == 1 && !professionStudiesProvider.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Please complete all required fields in Education Details.',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (_currentIndex == 2 && !academicProvider.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter your current academic project.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (_currentIndex == 3 && !projectProvider.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter your professional goal or project.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (_currentIndex == 4 && !credentialsProvider.isPasswordMatch) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Passwords do not match or are empty.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (_currentIndex < _tabs.length - 1) {
+        setState(() {
+          _currentIndex++;
+        });
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const ToastModal(),
+        );
+
+        Future.delayed(const Duration(milliseconds: 4000), () {
+          if (mounted) {
+            Navigator.of(context).pop();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+            );
+          }
+        });
+      }
+    });
   }
 
   void _previousTab() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/academic_project_provider.dart';
 
 class AcademicProjectTab extends StatefulWidget {
   const AcademicProjectTab({super.key});
@@ -9,27 +10,17 @@ class AcademicProjectTab extends StatefulWidget {
 }
 
 class _AcademicProjectTabState extends State<AcademicProjectTab> {
-  final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
-    _loadSavedText();
-  }
-
-  // Load persisted text from SharedPreferences
-  Future<void> _loadSavedText() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _controller.text = prefs.getString('academic_project_text') ?? '';
-    });
-  }
-
-  // Save text when the user types
-  Future<void> _saveText(String text) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('academic_project_text', text);
+    final provider = Provider.of<AcademicProjectProvider>(
+      context,
+      listen: false,
+    );
+    _controller = TextEditingController(text: provider.projectText);
   }
 
   @override
@@ -41,6 +32,7 @@ class _AcademicProjectTabState extends State<AcademicProjectTab> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AcademicProjectProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -56,8 +48,6 @@ class _AcademicProjectTabState extends State<AcademicProjectTab> {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Fixed Container with Persistent & Scrollable Content
           Container(
             width: 360,
             height: 256,
@@ -75,7 +65,7 @@ class _AcademicProjectTabState extends State<AcademicProjectTab> {
                   selectionControls: _blackSelectionControls(),
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  onChanged: _saveText, // Save text automatically
+                  onChanged: (value) => provider.setProjectText(value),
                   style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
@@ -103,8 +93,7 @@ class _AcademicProjectTabState extends State<AcademicProjectTab> {
     );
   }
 
-  // Custom selection controls to keep selection color black
   TextSelectionControls _blackSelectionControls() {
-    return MaterialTextSelectionControls(); // Ensures default behavior but forces black
+    return MaterialTextSelectionControls();
   }
 }

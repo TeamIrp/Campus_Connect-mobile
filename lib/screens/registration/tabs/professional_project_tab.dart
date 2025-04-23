@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/professional_project_provider.dart';
 
 class ProfessionalProjectTab extends StatefulWidget {
   const ProfessionalProjectTab({super.key});
@@ -9,27 +10,20 @@ class ProfessionalProjectTab extends StatefulWidget {
 }
 
 class _ProfessionalProjectTabState extends State<ProfessionalProjectTab> {
-  final TextEditingController _controller = TextEditingController();
+  late TextEditingController _controller;
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _loadSavedText();
-  }
-
-  // Load persisted text from SharedPreferences
-  Future<void> _loadSavedText() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _controller.text = prefs.getString('professional_project_text') ?? '';
+    final provider = Provider.of<ProfessionalProjectProvider>(
+      context,
+      listen: false,
+    );
+    _controller = TextEditingController(text: provider.projectText);
+    _controller.addListener(() {
+      provider.updateText(_controller.text);
     });
-  }
-
-  // Save text when the user types
-  Future<void> _saveText(String text) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('professional_project_text', text);
   }
 
   @override
@@ -56,8 +50,6 @@ class _ProfessionalProjectTabState extends State<ProfessionalProjectTab> {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Fixed Container with Persistent & Scrollable Content
           Container(
             width: 360,
             height: 256,
@@ -72,10 +64,8 @@ class _ProfessionalProjectTabState extends State<ProfessionalProjectTab> {
                   controller: _controller,
                   focusNode: _focusNode,
                   cursorColor: Colors.black,
-                  selectionControls: _blackSelectionControls(),
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  onChanged: _saveText, // Save text automatically
                   style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,
@@ -84,7 +74,8 @@ class _ProfessionalProjectTabState extends State<ProfessionalProjectTab> {
                     color: Colors.black,
                   ),
                   decoration: const InputDecoration(
-                    hintText: "I Want To Have A Master In Statistics Because I'd Like To Become A Banker",
+                    hintText:
+                        "I Want To Have A Master In Statistics Because I'd Like To Become A Banker",
                     hintStyle: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
@@ -101,10 +92,5 @@ class _ProfessionalProjectTabState extends State<ProfessionalProjectTab> {
         ],
       ),
     );
-  }
-
-  // Custom selection controls to keep selection color black
-  TextSelectionControls _blackSelectionControls() {
-    return MaterialTextSelectionControls(); // Ensures default behavior but forces black
   }
 }

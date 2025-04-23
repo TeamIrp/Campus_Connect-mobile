@@ -1,15 +1,22 @@
+import 'package:campus_connect/providers/academic_project_provider.dart';
+import 'package:campus_connect/providers/credentials_provider.dart';
+import 'package:campus_connect/providers/profession_studies_provider.dart';
+import 'package:campus_connect/providers/professional_project_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:campus_connect/screens/authentication/screens/login_screen.dart';
 import 'package:campus_connect/screens/splash_screen.dart';
 import 'package:campus_connect/theme/app_theme.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:campus_connect/providers/basic_details_provider.dart';
+
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
-  await Hive.initFlutter(); // Initialize Hive
-  await Hive.openBox('chats'); // Open the 'chats' box
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('chats');
 
   runApp(const MyApp());
 }
@@ -43,10 +50,20 @@ class _MyAppState extends State<MyApp> {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (_, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.themeData,
-          home: _showSplash ? const SplashScreen() : const LoginScreen(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => BasicDetailsProvider()),
+            ChangeNotifierProvider(create: (_) => ProfessionalProjectProvider()),
+            ChangeNotifierProvider(create: (_) => AcademicProjectProvider()),
+            ChangeNotifierProvider(create: (_) => ProfessionStudiesProvider()),
+            ChangeNotifierProvider(create: (_) => CredentialsProvider()),
+
+          ],
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.themeData,
+            home: _showSplash ? const SplashScreen() : const LoginScreen(),
+          ),
         );
       },
     );
@@ -61,13 +78,11 @@ class _MyAppState extends State<MyApp> {
 
 
 
+
+
+
+
 // -------------------- i-phone view code ---------------------------
-
-
-
-
-
-
 
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/material.dart';

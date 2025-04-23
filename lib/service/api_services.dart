@@ -3,58 +3,77 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../models/registration.dart';
+import '../models/registration_model.dart';
 import 'contant_url.dart';
 import 'dio_service.dart';
 
 class ApiService {
   ApiService._internal();
+
   static final _apiService = ApiService._internal();
+
   factory ApiService() => _apiService;
 
-  static Future<Registration> getRegister(BuildContext context,String lang, String firstname, String lastname,  String emailAddress, String mobileNo,
-      String password, String gender, String dob, String relationshipStatus , String  typeOfRelationship , String  currentIntendedOccupation ,
-      String academicField , String professionalGoalsProjects , String passwordConfirmation , String  labelOfStudies , String universitySchool , File image) async {
-     late Registration registration;
-     Dio dio = Dio();
+  static Future<Registration> getRegister(
+    BuildContext context,
+    String lang,
+    String firstname,
+    String lastname,
+    String emailAddress,
+    String mobileNo,
+    String password,
+    String gender,
+    String dob,
+    String relationshipStatus,
+    String typeOfRelationship,
+    String currentIntendedOccupation,
+    String academicField,
+    String professionalGoalsProjects,
+    String passwordConfirmation,
+    String labelOfStudies,
+    String universitySchool,
+    File image,
+  ) async {
+    late Registration registration;
+    Dio dio = Dio();
     FormData data = FormData.fromMap({
-      "firstname" : firstname,
-      "lastname" : lastname,
-      "email_address" :  emailAddress,
-      "mobile_number" :  mobileNo,
-      "password" : password,
-      "gender" : gender,
-      "date_of_birth" : dob,
-      "relationship_status" : relationshipStatus,
-      "type_of_relationship" : typeOfRelationship,
-      "Current_INtended_occupation" : currentIntendedOccupation,
-      "academic_field" : academicField,
-      "professional_goals_projects" : professionalGoalsProjects,
-      "password_confirmation" : passwordConfirmation,
-      "label_of_studies" : labelOfStudies,
-      "university_school" : universitySchool,
-      "img" : await MultipartFile.fromFile(image.path)
+      "firstname": firstname,
+      "lastname": lastname,
+      "email_address": emailAddress,
+      "mobile_number": mobileNo,
+      "password": password,
+      "gender": gender,
+      "date_of_birth": dob,
+      "relationship_status": relationshipStatus,
+      "type_of_relationship": typeOfRelationship,
+      "current_intended_occupation": currentIntendedOccupation,
+      "academic_field": academicField,
+      "professional_goals_projects": professionalGoalsProjects,
+      "password_confirmation": passwordConfirmation,
+      "label_of_studies": labelOfStudies,
+      "university_school": universitySchool,
+      "img": await MultipartFile.fromFile(image.path),
     });
 
-    try{
+    try {
       final response = await DioService().dio.post(
-          data: data,
-          ConstantUrl.register,
-          options: Options(
-            headers: {
-              // 'Authorization': 'Bearer $token',
-              // 'Content-Type': 'application/json',
-            },
-          )
+        data: data,
+        ConstantUrl.register,
+        options: Options(
+          headers: {
+            // 'Authorization': 'Bearer $token',
+            // 'Content-Type': 'application/json',
+          },
+        ),
       );
 
-      if (response.statusCode == 200){
+      if (response.statusCode == 200) {
         registration = Registration.fromJson(response.data);
         return registration;
-      }else {
+      } else {
         return Registration(
-            errorMsg: 'Api failed with status code : ${response.statusCode}',
-            isError: true
+          errorMsg: 'Api failed with status code : ${response.statusCode}',
+          isError: true,
         );
       }
     } on DioException catch (e) {
@@ -89,15 +108,9 @@ class ApiService {
           errorMessage = "Something went wrong";
           break;
       }
-      return Registration(
-        errorMsg: errorMessage,
-        isError: true,
-      );
-    }catch(e){
-      return Registration(
-        errorMsg: 'An error occurred $e',
-        isError: true,
-      );
+      return Registration(errorMsg: errorMessage, isError: true);
+    } catch (e) {
+      return Registration(errorMsg: 'An error occurred $e', isError: true);
     }
   }
 
@@ -182,7 +195,11 @@ class ApiService {
   //
   // }
 
-  static Future<void> _retryRequestWithDelay(Dio dio, RequestOptions requestOptions, {int retryAfter = 5}) async {
+  static Future<void> _retryRequestWithDelay(
+    Dio dio,
+    RequestOptions requestOptions, {
+    int retryAfter = 5,
+  }) async {
     await Future.delayed(Duration(seconds: retryAfter)); // Delay before retry
     try {
       Response retryResponse = await dio.request(
@@ -199,5 +216,4 @@ class ApiService {
       print("Retry failed: $retryError");
     }
   }
-
-  }
+}

@@ -18,3 +18,4 @@ class Registration {
 
   Map<String, dynamic> toJson() => {"success": success, "message": message};
 }
+

@@ -1,128 +1,91 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
+import 'package:provider/provider.dart';
+import '../../../providers/basic_details_provider.dart';
 
 class BasicDetailsTab extends StatefulWidget {
   const BasicDetailsTab({super.key});
 
   @override
-  _BasicDetailsTabState createState() => _BasicDetailsTabState();
+  State<BasicDetailsTab> createState() => _BasicDetailsTabState();
 }
 
 class _BasicDetailsTabState extends State<BasicDetailsTab> {
-  File? _image;
   final ImagePicker _picker = ImagePicker();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
-  DateTime? _selectedDate;
-  String? _selectedGender;
-  String? _selectedRelationshipStatus;
-  String? _selectedRelationshipType;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedData();
-  }
-
-  Future<void> _loadSavedData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _firstNameController.text = prefs.getString('first_name') ?? '';
-      _lastNameController.text = prefs.getString('last_name') ?? '';
-      _usernameController.text = prefs.getString('username') ?? '';
-      _emailController.text = prefs.getString('email') ?? '';
-      _mobileController.text = prefs.getString('mobile') ?? '';
-      _selectedGender = prefs.getString('gender');
-      _selectedRelationshipStatus = prefs.getString('relationship_status');
-      _selectedRelationshipType = prefs.getString('relationship_type');
-      String? savedDate = prefs.getString('date_of_birth');
-      if (savedDate != null) {
-        _selectedDate = DateTime.parse(savedDate);
-      }
-      String? imagePath = prefs.getString('profile_image');
-      if (imagePath != null && File(imagePath).existsSync()) {
-        _image = File(imagePath);
-      }
-    });
-  }
-
-  Future<void> _saveData(String key, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
-  }
-
-  Future<void> _saveDate(DateTime date) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('date_of_birth', date.toIso8601String());
-  }
-
-  Future<void> _saveImage(File image) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profile_image', image.path);
-  }
-
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(BuildContext context) async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      _saveImage(_image!);
+      Provider.of<BasicDetailsProvider>(
+        context,
+        listen: false,
+      ).setImage(File(pickedFile.path));
     }
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final provider = Provider.of<BasicDetailsProvider>(context, listen: false);
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: provider.dateOfBirth ?? DateTime(2000),
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
     );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-      _saveDate(picked);
-    }
+    if (picked != null) provider.setDateOfBirth(picked);
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<BasicDetailsProvider>(context);
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildProfilePicture(),
+          _buildProfilePicture(provider),
           const SizedBox(height: 40),
-          _buildInputRow("First Name", _firstNameController, "Last Name", _lastNameController),
-          _buildInputField("Username", _usernameController),
-          _buildInputField("Email Address", _emailController),
-          _buildInputField("Mobile Number", _mobileController),
-          _buildDropdownField("Gender", ["Male", "Female", "Other"], _selectedGender, (val) {
-            setState(() => _selectedGender = val);
-            _saveData("gender", val!);
-          }),
-          _buildDatePicker(),
-          _buildDropdownField("Relationship Status", ["Single", "Married", "Other"], _selectedRelationshipStatus, (val) {
-            setState(() => _selectedRelationshipStatus = val);
-            _saveData("relationship_status", val!);
-          }),
-          _buildDropdownField("Type of Relationship Sought", ["Friendship", "Networking", "Dating", "Other"], _selectedRelationshipType, (val) {
-            setState(() => _selectedRelationshipType = val);
-            _saveData("relationship_type", val!);
-          }),
+          _buildInputRow(
+            context,
+            "First Name",
+            provider.firstName,
+            provider.setFirstName,
+            "Last Name",
+            provider.lastName,
+            provider.setLastName,
+          ),
+          _buildInputField("Username", provider.username, provider.setUsername),
+          _buildInputField("Email Address", provider.email, provider.setEmail),
+          _buildInputField(
+            "Mobile Number",
+            provider.mobile,
+            provider.setMobile,
+          ),
+          _buildDropdownField(
+            "Gender",
+            ["Male", "Female", "Other"],
+            provider.gender,
+            provider.setGender,
+          ),
+          _buildDatePicker(provider),
+          _buildDropdownField(
+            "Relationship Status",
+            ["Single", "Married", "Other"],
+            provider.relationshipStatus,
+            provider.setRelationshipStatus,
+          ),
+          _buildDropdownField(
+            "Type of Relationship Sought",
+            ["Friendship", "Networking", "Dating", "Other"],
+            provider.relationshipType,
+            provider.setRelationshipType,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildProfilePicture() {
+  Widget _buildProfilePicture(BasicDetailsProvider provider) {
     return Center(
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -131,12 +94,15 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
           CircleAvatar(
             radius: 57,
             backgroundColor: const Color(0xFF343434),
-            backgroundImage: _image != null ? FileImage(_image!) : null,
+            backgroundImage:
+                provider.profileImage != null
+                    ? FileImage(provider.profileImage!)
+                    : null,
           ),
           Positioned(
             bottom: -14,
             child: GestureDetector(
-              onTap: _pickImage,
+              onTap: () => _pickImage(context),
               child: const CircleAvatar(
                 radius: 16,
                 backgroundColor: Color(0xFF797979),
@@ -149,26 +115,49 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     );
   }
 
-  Widget _buildInputRow(String label1, TextEditingController controller1, String label2, TextEditingController controller2) {
+  Widget _buildInputRow(
+    BuildContext context,
+    String label1,
+    String value1,
+    Function(String) onChanged1,
+    String label2,
+    String value2,
+    Function(String) onChanged2,
+  ) {
     return Row(
       children: [
-        Expanded(child: _buildInputField(label1, controller1)),
+        Expanded(child: _buildInputField(label1, value1, onChanged1)),
         const SizedBox(width: 10),
-        Expanded(child: _buildInputField(label2, controller2)),
+        Expanded(child: _buildInputField(label2, value2, onChanged2)),
       ],
     );
   }
 
-  Widget _buildInputField(String label, TextEditingController controller) {
+  Widget _buildInputField(
+    String label,
+    String value,
+    Function(String) onChanged,
+  ) {
+    final controller = TextEditingController(text: value);
+    controller.selection = TextSelection.collapsed(
+      offset: controller.text.length,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+        ),
         const SizedBox(height: 5),
         TextField(
           controller: controller,
-          cursorColor: Colors.black,
-          onChanged: (value) => _saveData(label.toLowerCase().replaceAll(" ", "_"), value),
+          onChanged: onChanged,
           decoration: InputDecoration(
             hintText: "Enter",
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -180,11 +169,11 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
   }
 
   Widget _buildDropdownField(
-      String label,
-      List<String> options,
-      String? selectedValue,
-      ValueChanged<String?> onChanged,
-      ) {
+    String label,
+    List<String> options,
+    String? selectedValue,
+    ValueChanged<String?> onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -200,22 +189,13 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
         DropdownButtonFormField<String>(
           value: selectedValue,
           onChanged: onChanged,
-          items: options
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
+          items:
+              options
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
           decoration: InputDecoration(
             hintText: 'Select',
-            hintStyle: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
-              height: 1.0,
-              letterSpacing: 0,
-              color: Color(0xFF797979),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         const SizedBox(height: 20),
@@ -223,15 +203,27 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     );
   }
 
-  Widget _buildDatePicker() {
+  Widget _buildDatePicker(BasicDetailsProvider provider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Date of Birth", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black)),
+        const Text(
+          "Date of Birth",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+        ),
         const SizedBox(height: 5),
         TextField(
           readOnly: true,
-          controller: TextEditingController(text: _selectedDate != null ? "${_selectedDate!.month}-${_selectedDate!.day}-${_selectedDate!.year}" : ""),
+          controller: TextEditingController(
+            text:
+                provider.dateOfBirth != null
+                    ? "${provider.dateOfBirth!.month}-${provider.dateOfBirth!.day}-${provider.dateOfBirth!.year}"
+                    : "",
+          ),
           onTap: () => _selectDate(context),
           decoration: InputDecoration(
             hintText: "MM-DD-YYYY",
