@@ -30,7 +30,7 @@ class ApiService {
     String academicField,
     String professionalGoalsProjects,
     String passwordConfirmation,
-    String labelOfStudies,
+    String levelOfStudies,
     String universitySchool,
     File image,
   ) async {
@@ -39,7 +39,7 @@ class ApiService {
     FormData data = FormData.fromMap({
       "firstname": firstname,
       "lastname": lastname,
-      "email_address": emailAddress,
+      "email": emailAddress,
       "mobile_number": mobileNo,
       "password": password,
       "gender": gender,
@@ -50,7 +50,7 @@ class ApiService {
       "academic_field": academicField,
       "professional_goals_projects": professionalGoalsProjects,
       "password_confirmation": passwordConfirmation,
-      "label_of_studies": labelOfStudies,
+      "level_of_studies": levelOfStudies,
       "university_school": universitySchool,
       "img": await MultipartFile.fromFile(image.path),
     });
