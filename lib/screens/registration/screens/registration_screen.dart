@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:campus_connect/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/academic_project_provider.dart';
@@ -188,5 +191,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> getRegister(BuildContext context,
+      String firstname,
+      String lastname,
+      String username,
+      String emailAddress,
+      String mobileNo,
+      String password,
+      String gender,
+      String dob,
+      String relationshipStatus,
+      String typeOfRelationship,
+      String currentIntendedOccupation,
+      String academicField,
+      String professionalGoalsProjects,
+      String passwordConfirmation,
+      String levelOfStudies,
+      String universitySchool,
+      File image,)async{
+    final registerProvider = Provider.of<AuthProvider>(context, listen: false);
+    await registerProvider.getRegistration(context, firstname, lastname, username, emailAddress, mobileNo, password, gender, dob, relationshipStatus, typeOfRelationship, currentIntendedOccupation, academicField, professionalGoalsProjects,
+        passwordConfirmation, levelOfStudies, universitySchool, image);
+    if (registerProvider.registration?.statusCode == 200 && registerProvider.registration?.status == true){
+
+
+    }
   }
 }

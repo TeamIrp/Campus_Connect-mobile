@@ -1,4 +1,5 @@
 import 'package:campus_connect/providers/academic_project_provider.dart';
+import 'package:campus_connect/providers/auth_provider.dart';
 import 'package:campus_connect/providers/credentials_provider.dart';
 import 'package:campus_connect/providers/profession_studies_provider.dart';
 import 'package:campus_connect/providers/professional_project_provider.dart';
@@ -57,6 +58,7 @@ class _MyAppState extends State<MyApp> {
             ChangeNotifierProvider(create: (_) => AcademicProjectProvider()),
             ChangeNotifierProvider(create: (_) => ProfessionStudiesProvider()),
             ChangeNotifierProvider(create: (_) => CredentialsProvider()),
+            ChangeNotifierProvider(create: (_) => AuthProvider()),
 
           ],
           child: MaterialApp(

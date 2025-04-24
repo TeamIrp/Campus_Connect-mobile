@@ -16,9 +16,9 @@ class ApiService {
 
   static Future<Registration> getRegister(
     BuildContext context,
-    String lang,
     String firstname,
     String lastname,
+    String username,
     String emailAddress,
     String mobileNo,
     String password,
@@ -39,6 +39,7 @@ class ApiService {
     FormData data = FormData.fromMap({
       "firstname": firstname,
       "lastname": lastname,
+      "username": username,
       "email": emailAddress,
       "mobile_number": mobileNo,
       "password": password,
