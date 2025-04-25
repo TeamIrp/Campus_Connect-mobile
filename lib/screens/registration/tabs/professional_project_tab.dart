@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/professional_project_provider.dart';
+import '../../../providers/auth_provider.dart';
 
 class ProfessionalProjectTab extends StatefulWidget {
   const ProfessionalProjectTab({super.key});

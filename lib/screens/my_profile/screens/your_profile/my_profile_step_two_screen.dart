@@ -68,7 +68,6 @@ class _MyProfileStepTwoScreenState extends State<MyProfileStepTwoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: const ProfileAppBar(title: 'My Profile'),
       body: SingleChildScrollView(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/advertisement_screen.dart';
-import '../widgets/advertisements_box.dart';
 import '../widgets/profile_card.dart';
 
 class HomeTab2 extends StatelessWidget {

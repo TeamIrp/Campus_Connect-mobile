@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/basic_details_provider.dart';
+import '../../../providers/auth_provider.dart';
 
 class BasicDetailsTab extends StatefulWidget {
   const BasicDetailsTab({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/academic_project_provider.dart';
+import '../../../providers/auth_provider.dart';
 
 class AcademicProjectTab extends StatefulWidget {
   const AcademicProjectTab({super.key});
@@ -20,7 +20,7 @@ class _AcademicProjectTabState extends State<AcademicProjectTab> {
       context,
       listen: false,
     );
-    _controller = TextEditingController(text: provider.projectText);
+    _controller = TextEditingController(text: provider.academicText);
   }
 
   @override
@@ -65,7 +65,7 @@ class _AcademicProjectTabState extends State<AcademicProjectTab> {
                   selectionControls: _blackSelectionControls(),
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  onChanged: (value) => provider.setProjectText(value),
+                  onChanged: (value) => provider.setAcademicText(value),
                   style: const TextStyle(
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w400,

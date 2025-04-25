@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/filter_screen.dart';
 import '../../../widgets/notification_screen.dart';
 import '../widgets/profile_card.dart';
 

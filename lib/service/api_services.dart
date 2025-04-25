@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../models/login_model.dart';
 import '../models/registration_model.dart';
 import 'contant_url.dart';
 import 'dio_service.dart';
@@ -58,12 +59,11 @@ class ApiService {
 
     try {
       final response = await DioService().dio.post(
-        data: data,
         ConstantUrl.register,
+        data: data,
         options: Options(
           headers: {
-            // 'Authorization': 'Bearer $token',
-            // 'Content-Type': 'application/json',
+
           },
         ),
       );
@@ -115,86 +115,85 @@ class ApiService {
     }
   }
 
-  // static Future<Login> getLogin(BuildContext context,String lang, String email,String password, String deviceToken) async {
-  //   late Login login;
-  //   Dio dio = Dio();
-  //   try {
-  //     final response = await DioService().dio.post(
-  //         data: {
-  //           "lang": lang,
-  //           "email": email,
-  //           "password": password,
-  //           "device_token": deviceToken
-  //
-  //         },
-  //         ConstantUrl.login,
-  //         options: Options(
-  //           headers: {
-  //             // 'Authorization': 'Bearer $token',
-  //             // 'Content-Type': 'application/json',
-  //           },
-  //         )
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       login = Login.fromJson(response.data);
-  //       if (login.statusCode == 201 && login.status == false) {
-  //         return Login(
-  //           errorMsg: login.message, // e.g., "Ticket already scanned."
-  //           isError: true,
-  //         );
-  //       }
-  //       return login;
-  //     } else {
-  //       return Login(
-  //           errorMsg: 'Api failed with status code : ${response.statusCode}',
-  //           isError: true
-  //       );
-  //     }
-  //   }on DioException catch (e) {
-  //     String errorMessage;
-  //     switch (e.type) {
-  //       case DioExceptionType.connectionTimeout:
-  //         errorMessage = context.formatString(LocaleData.connection_time_out_txt, ["args"]);
-  //         break;
-  //       case DioExceptionType.sendTimeout:
-  //         errorMessage = context.formatString(LocaleData.something_went_wrong_txt, ["args"]);
-  //         break;
-  //       case DioExceptionType.receiveTimeout:
-  //         errorMessage = context.formatString(LocaleData.something_went_wrong_txt, ["args"]);
-  //         break;
-  //       case DioExceptionType.badCertificate:
-  //         errorMessage = context.formatString(LocaleData.something_went_wrong_txt, ["args"]);
-  //         break;
-  //       case DioExceptionType.badResponse:
-  //         errorMessage = context.formatString(LocaleData.received_invalid_txt, ["args"]);
-  //         await _retryRequestWithDelay(dio, e.requestOptions, retryAfter: 5);
-  //         break;
-  //       case DioExceptionType.cancel:
-  //         errorMessage = context.formatString(LocaleData.something_went_wrong_txt, ["args"]);
-  //         break;
-  //       case DioExceptionType.connectionError:
-  //         errorMessage = context.formatString(LocaleData.no_internet_connect_txt, ["args"]);
-  //         break;
-  //       case DioExceptionType.unknown:
-  //         errorMessage = context.formatString(LocaleData.no_internet_connect_txt, ["args"]);
-  //         break;
-  //       default:
-  //         errorMessage = context.formatString(LocaleData.something_went_wrong_txt, ["args"]);
-  //         break;
-  //     }
-  //     return Login(
-  //       errorMsg: errorMessage,
-  //       isError: true,
-  //     );
-  //   } catch (e) {
-  //     return Login(
-  //       errorMsg: 'An error occurred $e',
-  //       isError: true,
-  //     );
-  //   }
-  //
-  // }
+
+  static Future<Login> getLogin(BuildContext context, String email, String password, String deviceToken) async {
+    late Login login;
+    Dio dio = Dio();
+
+    try {
+      final response = await DioService().dio.post(
+        ConstantUrl.login,
+        data: {
+          "email": email,
+          "password": password,
+          "device_token": deviceToken,
+        },
+        options: Options(
+          headers: {
+            // You can set custom headers here if needed
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        login = Login.fromJson(response.data);
+        if (login.statusCode == 201 && login.status == false) {
+          return Login(
+            errorMsg: login.message,
+            isError: true,
+          );
+        }
+        return login;
+      } else {
+        return Login(
+          errorMsg: 'API failed with status code: ${response.statusCode}',
+          isError: true,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage;
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+          errorMessage = 'Connection timed out.';
+          break;
+        case DioExceptionType.sendTimeout:
+          errorMessage = 'Request sending timed out.';
+          break;
+        case DioExceptionType.receiveTimeout:
+          errorMessage = 'Response timed out.';
+          break;
+        case DioExceptionType.badCertificate:
+          errorMessage = 'Bad certificate from server.';
+          break;
+        case DioExceptionType.badResponse:
+          errorMessage = 'Received invalid response.';
+          await _retryRequestWithDelay(dio, e.requestOptions, retryAfter: 5);
+          break;
+        case DioExceptionType.cancel:
+          errorMessage = 'Request was cancelled.';
+          break;
+        case DioExceptionType.connectionError:
+          errorMessage = 'No internet connection.';
+          break;
+        case DioExceptionType.unknown:
+          errorMessage = 'Unknown error occurred.';
+          break;
+        default:
+          errorMessage = 'Something went wrong.';
+          break;
+      }
+      return Login(
+        errorMsg: errorMessage,
+        isError: true,
+      );
+    } catch (e) {
+      return Login(
+        errorMsg: 'An unexpected error occurred: $e',
+        isError: true,
+      );
+    }
+  }
+
 
   static Future<void> _retryRequestWithDelay(
     Dio dio,

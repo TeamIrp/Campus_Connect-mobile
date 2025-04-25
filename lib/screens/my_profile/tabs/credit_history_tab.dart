@@ -5,9 +5,7 @@ class CreditHistoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
 
-    // Sample data
     final List<Map<String, dynamic>> history = List.generate(10, (index) {
       return {
         'type': index % 2 == 0 ? 'Credit' : 'Debit',

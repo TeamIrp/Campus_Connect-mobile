@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../widgets/toast_modals.dart';
-import '../../my_profile_tab_screen.dart';
 import '../../widgets/profile_appbar.dart';
 
 class MyProfileStepThreeScreen extends StatefulWidget {

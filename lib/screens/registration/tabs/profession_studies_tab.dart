@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/profession_studies_provider.dart';
+import '../../../providers/auth_provider.dart';
 
 class ProfessionStudiesTab extends StatefulWidget {
   const ProfessionStudiesTab({super.key});
@@ -28,17 +26,6 @@ class _ProfessionStudiesTabState extends State<ProfessionStudiesTab> {
       _academicFieldController.text = provider.academicField ?? '';
       _universityController.text = provider.university ?? '';
     });
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      Provider.of<ProfessionStudiesProvider>(
-        context,
-        listen: false,
-      ).updateImagePath(image.path);
-    }
   }
 
   @override

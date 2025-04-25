@@ -6,5 +6,5 @@ class ConstantUrl {
   ConstantUrl._internal();
   static const String baseUrl = "https://campusconnect-web.irpinnovative.com/api/";
   static const String register = "userregistration";
-  static const String login = "login";
+  static const String login = "userlogin";
 }

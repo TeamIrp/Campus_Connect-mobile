@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:campus_connect/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/credentials_provider.dart';
-import '../../authentication/screens/login_screen.dart';
 import '../../privacy_policy.dart';
 import '../../terms_of_service.dart';
 
@@ -18,37 +14,6 @@ class SetCredentialsTab extends StatefulWidget {
 class _SetCredentialsTabState extends State<SetCredentialsTab> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-
-  void _submitCredentials(BuildContext context) {
-    final credentialsProvider = Provider.of<CredentialsProvider>(
-      context,
-      listen: false,
-    );
-
-    if (credentialsProvider.isPasswordMatch) {
-      // Navigate to Login Screen
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Credentials set successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match or are empty.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +36,6 @@ class _SetCredentialsTabState extends State<SetCredentialsTab> {
             ),
           ),
           const SizedBox(height: 20),
-
           const Text(
             "Password",
             style: TextStyle(
@@ -103,26 +67,24 @@ class _SetCredentialsTabState extends State<SetCredentialsTab> {
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(color: Colors.black),
               ),
-              suffixIcon:
-                  hasPasswordText
-                      ? IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      )
-                      : null,
+              suffixIcon: hasPasswordText
+                  ? IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    )
+                  : null,
             ),
           ),
           const SizedBox(height: 20),
-
           const Text(
             "Confirm Password",
             style: TextStyle(
@@ -154,26 +116,24 @@ class _SetCredentialsTabState extends State<SetCredentialsTab> {
                 borderRadius: BorderRadius.circular(10),
                 borderSide: const BorderSide(color: Colors.black),
               ),
-              suffixIcon:
-                  hasConfirmText
-                      ? IconButton(
-                        icon: Icon(
-                          _obscureConfirmPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureConfirmPassword = !_obscureConfirmPassword;
-                          });
-                        },
-                      )
-                      : null,
+              suffixIcon: hasConfirmText
+                  ? IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    )
+                  : null,
             ),
           ),
           const SizedBox(height: 20),
-
           Center(
             child: RichText(
               textAlign: TextAlign.center,
@@ -191,13 +151,12 @@ class _SetCredentialsTabState extends State<SetCredentialsTab> {
                   ),
                   WidgetSpan(
                     child: GestureDetector(
-                      onTap:
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const TermsOfServiceScreen(),
-                            ),
-                          ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TermsOfServiceScreen(),
+                        ),
+                      ),
                       child: const Text(
                         "Terms of Service",
                         style: TextStyle(
@@ -210,13 +169,12 @@ class _SetCredentialsTabState extends State<SetCredentialsTab> {
                   const TextSpan(text: " & "),
                   WidgetSpan(
                     child: GestureDetector(
-                      onTap:
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const PrivacyPolicyScreen(),
-                            ),
-                          ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                        ),
+                      ),
                       child: const Text(
                         "Privacy Policy",
                         style: TextStyle(

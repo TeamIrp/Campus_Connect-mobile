@@ -68,10 +68,6 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery
-        .of(context)
-        .size
-        .width < 600;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -499,6 +495,4 @@ class _FilterScreenState extends State<FilterScreen> {
   TextStyle _titleTextStyle() =>
       const TextStyle(fontWeight: FontWeight.w700, fontSize: 14);
 
-  TextStyle _valueTextStyle() =>
-      const TextStyle(fontWeight: FontWeight.w500, fontSize: 12);
 }

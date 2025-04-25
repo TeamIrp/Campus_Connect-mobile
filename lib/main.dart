@@ -1,8 +1,4 @@
-import 'package:campus_connect/providers/academic_project_provider.dart';
 import 'package:campus_connect/providers/auth_provider.dart';
-import 'package:campus_connect/providers/credentials_provider.dart';
-import 'package:campus_connect/providers/profession_studies_provider.dart';
-import 'package:campus_connect/providers/professional_project_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +7,6 @@ import 'package:campus_connect/screens/splash_screen.dart';
 import 'package:campus_connect/theme/app_theme.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
-import 'package:campus_connect/providers/basic_details_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,12 +48,12 @@ class _MyAppState extends State<MyApp> {
         return MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => BasicDetailsProvider()),
-            ChangeNotifierProvider(create: (_) => ProfessionalProjectProvider()),
+            ChangeNotifierProvider(
+                create: (_) => ProfessionalProjectProvider()),
             ChangeNotifierProvider(create: (_) => AcademicProjectProvider()),
             ChangeNotifierProvider(create: (_) => ProfessionStudiesProvider()),
             ChangeNotifierProvider(create: (_) => CredentialsProvider()),
             ChangeNotifierProvider(create: (_) => AuthProvider()),
-
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -71,18 +65,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // -------------------- i-phone view code ---------------------------
 

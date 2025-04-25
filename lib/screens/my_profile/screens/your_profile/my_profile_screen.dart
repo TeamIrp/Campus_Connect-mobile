@@ -142,15 +142,6 @@ class _YourProfileScreenState extends State<YourProfileScreen> {
     });
   }
 
-  Future<void> _clearSavedImages() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('selected_image_paths');
-    setState(() {
-      _selectedImages.clear();
-      _imagePaths.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenPadding = MediaQuery.of(context).size.width * 0.05;
