@@ -36,9 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: (currentIndex == 0 || currentIndex == 4)
           ? null
           : PreferredSize(
-        preferredSize: const Size.fromHeight(70),
-        child: HomeAppBar(currentIndex: currentIndex),
-      ),
+              preferredSize: const Size.fromHeight(70),
+              child: HomeAppBar(currentIndex: currentIndex),
+            ),
       body: tabs[currentIndex],
       bottomNavigationBar: CustomBottomNavbar(
         currentIndex: currentIndex,

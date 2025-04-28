@@ -14,10 +14,8 @@ class PageDetailsScreen extends StatefulWidget {
   State<PageDetailsScreen> createState() => _PageDetailsScreenState();
 }
 
-class _PageDetailsScreenState extends State<PageDetailsScreen>
-    with SingleTickerProviderStateMixin {
-  final DraggableScrollableController _controller =
-      DraggableScrollableController();
+class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTickerProviderStateMixin {
+  final DraggableScrollableController _controller = DraggableScrollableController();
   bool showOverlayDrawer = false;
   late AnimationController _overlayController;
   late Animation<Offset> _drawerAnimation;

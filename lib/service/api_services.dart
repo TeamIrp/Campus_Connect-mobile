@@ -34,6 +34,8 @@ class ApiService {
     String levelOfStudies,
     String universitySchool,
     File image,
+    double? latitude,
+    double? longitude,
   ) async {
     late Registration registration;
     Dio dio = Dio();
@@ -55,6 +57,8 @@ class ApiService {
       "level_of_studies": levelOfStudies,
       "university_school": universitySchool,
       "img": await MultipartFile.fromFile(image.path),
+      "latitude": latitude,
+      "longitude": longitude,
     });
 
     try {

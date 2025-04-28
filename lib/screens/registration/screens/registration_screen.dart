@@ -258,11 +258,6 @@
 //   }
 // }
 
-
-
-
-
-
 import 'dart:io';
 
 import 'package:campus_connect/providers/auth_provider.dart';
@@ -283,10 +278,10 @@ class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  RegistrationScreenState createState() => RegistrationScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class RegistrationScreenState extends State<RegistrationScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _tabs = [
@@ -307,11 +302,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void _nextTab() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final basicProvider = Provider.of<BasicDetailsProvider>(context, listen: false);
-      final professionStudiesProvider = Provider.of<ProfessionStudiesProvider>(context, listen: false);
-      final academicProvider = Provider.of<AcademicProjectProvider>(context, listen: false);
-      final projectProvider = Provider.of<ProfessionalProjectProvider>(context, listen: false);
-      final credentialsProvider = Provider.of<CredentialsProvider>(context, listen: false);
+      final basicProvider =
+          Provider.of<BasicDetailsProvider>(context, listen: false);
+      final professionStudiesProvider =
+          Provider.of<ProfessionStudiesProvider>(context, listen: false);
+      final academicProvider =
+          Provider.of<AcademicProjectProvider>(context, listen: false);
+      final projectProvider =
+          Provider.of<ProfessionalProjectProvider>(context, listen: false);
+      final credentialsProvider =
+          Provider.of<CredentialsProvider>(context, listen: false);
 
       if (_currentIndex == 0 && !basicProvider.isValid) {
         _showError('Please complete all required fields in Basic Details.');
@@ -349,6 +349,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           builder: (context) => const ToastModal(),
         );
 
+        print({'Latitude : ${basicProvider.latitude}'});
+        print({'Longitude : ${basicProvider.longitude}'});
+
         await getRegister(
           context,
           basicProvider.firstName,
@@ -368,6 +371,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           professionStudiesProvider.levelOfStudies ?? '',
           professionStudiesProvider.university ?? '',
           basicProvider.profileImage ?? File(''),
+          basicProvider.latitude ?? 0.0,
+          basicProvider.longitude ?? 0.0,
         );
 
         Future.delayed(const Duration(seconds: 4), () {
@@ -441,25 +446,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Future<void> getRegister(
-      BuildContext context,
-      String firstname,
-      String lastname,
-      String username,
-      String emailAddress,
-      String mobileNo,
-      String password,
-      String gender,
-      String dob,
-      String relationshipStatus,
-      String typeOfRelationship,
-      String currentIntendedOccupation,
-      String academicField,
-      String professionalGoalsProjects,
-      String passwordConfirmation,
-      String levelOfStudies,
-      String universitySchool,
-      File image,
-      ) async {
+    BuildContext context,
+    String firstname,
+    String lastname,
+    String username,
+    String emailAddress,
+    String mobileNo,
+    String password,
+    String gender,
+    String dob,
+    String relationshipStatus,
+    String typeOfRelationship,
+    String currentIntendedOccupation,
+    String academicField,
+    String professionalGoalsProjects,
+    String passwordConfirmation,
+    String levelOfStudies,
+    String universitySchool,
+    File image,
+    double latitude,
+    double longitude,
+  ) async {
     final registerProvider = Provider.of<AuthProvider>(context, listen: false);
     await registerProvider.getRegistration(
       context,
@@ -480,6 +487,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       levelOfStudies,
       universitySchool,
       image,
+      latitude,
+      longitude,
     );
   }
 }

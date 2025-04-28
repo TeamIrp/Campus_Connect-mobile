@@ -15,53 +15,81 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
 
   Registration? get registration => _registration;
+
   Login? get loginResponse => _loginResponse;
 
   bool get isLoading => _isLoading;
 
-  Future<void> getRegistration(BuildContext context,
-      String firstname,
-      String lastname,
-      String username,
-      String emailAddress,
-      String mobileNo,
-      String password,
-      String gender,
-      String dob,
-      String relationshipStatus,
-      String typeOfRelationship,
-      String currentIntendedOccupation,
-      String academicField,
-      String professionalGoalsProjects,
-      String passwordConfirmation,
-      String levelOfStudies,
-      String universitySchool,
-      File image,)async{
+  Future<void> getRegistration(
+    BuildContext context,
+    String firstname,
+    String lastname,
+    String username,
+    String emailAddress,
+    String mobileNo,
+    String password,
+    String gender,
+    String dob,
+    String relationshipStatus,
+    String typeOfRelationship,
+    String currentIntendedOccupation,
+    String academicField,
+    String professionalGoalsProjects,
+    String passwordConfirmation,
+    String levelOfStudies,
+    String universitySchool,
+    File image,
+    double? latitude,
+    double? longitude,
+  ) async {
     _isLoading = true;
     notifyListeners();
-    try{
-      _registration = await ApiService.getRegister(context, firstname, lastname, username, emailAddress, mobileNo, password, gender, dob, relationshipStatus, typeOfRelationship,
-          currentIntendedOccupation, academicField, professionalGoalsProjects, passwordConfirmation, levelOfStudies, universitySchool, image);
-      if (_registration?.statusCode == 200 && _registration?.status == true){
+    try {
+      _registration = await ApiService.getRegister(
+        context,
+        firstname,
+        lastname,
+        username,
+        emailAddress,
+        mobileNo,
+        password,
+        gender,
+        dob,
+        relationshipStatus,
+        typeOfRelationship,
+        currentIntendedOccupation,
+        academicField,
+        professionalGoalsProjects,
+        passwordConfirmation,
+        levelOfStudies,
+        universitySchool,
+        image,
+        latitude,
+        longitude,
+      );
+      if (_registration?.statusCode == 200 && _registration?.status == true) {
         ShowToast.showToastSuccess(_registration!.message.toString());
         notifyListeners();
-      }else if(_registration?.statusCode == 400 && _registration?.status == false){
+      } else if (_registration?.statusCode == 400 &&
+          _registration?.status == false) {
         ShowToast.showToastError(_registration!.message.toString());
         notifyListeners();
-      }else{
+      } else {
         ShowToast.showToastError(_registration!.errorMsg.toString());
       }
-
-    }catch(e){
+    } catch (e) {
       ShowToast.showToastError(e.toString());
-    }finally{
+    } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-
-  Future<void> getlogin(BuildContext context, String email, String password, ) async {
+  Future<void> getlogin(
+    BuildContext context,
+    String email,
+    String password,
+  ) async {
     _isLoading = true;
     notifyListeners();
     try {
@@ -69,7 +97,8 @@ class AuthProvider extends ChangeNotifier {
       if (_loginResponse?.statusCode == 200 && _loginResponse?.status == true) {
         ShowToast.showToastSuccess(_loginResponse!.message.toString());
         notifyListeners();
-      } else if (_loginResponse?.statusCode == 400 && _loginResponse?.status == false) {
+      } else if (_loginResponse?.statusCode == 400 &&
+          _loginResponse?.status == false) {
         ShowToast.showToastError(_loginResponse!.message.toString());
         notifyListeners();
       } else {
@@ -84,6 +113,83 @@ class AuthProvider extends ChangeNotifier {
   }
 }
 
+// class BasicDetailsProvider with ChangeNotifier {
+//   File? profileImage;
+//   String firstName = '';
+//   String lastName = '';
+//   String username = '';
+//   String email = '';
+//   String mobile = '';
+//   String? gender;
+//   DateTime? dateOfBirth;
+//   String? relationshipStatus;
+//   String? relationshipType;
+//
+//   void setImage(File image) {
+//     profileImage = image;
+//     notifyListeners();
+//   }
+//
+//   void setFirstName(String value) {
+//     firstName = value;
+//     notifyListeners();
+//   }
+//
+//   void setLastName(String value) {
+//     lastName = value;
+//     notifyListeners();
+//   }
+//
+//   void setUsername(String value) {
+//     username = value;
+//     notifyListeners();
+//   }
+//
+//   void setEmail(String value) {
+//     email = value;
+//     notifyListeners();
+//   }
+//
+//   void setMobile(String value) {
+//     mobile = value;
+//     notifyListeners();
+//   }
+//
+//   void setGender(String? value) {
+//     gender = value;
+//     notifyListeners();
+//   }
+//
+//   void setDateOfBirth(DateTime value) {
+//     dateOfBirth = value;
+//     notifyListeners();
+//   }
+//
+//   void setRelationshipStatus(String? value) {
+//     relationshipStatus = value;
+//     notifyListeners();
+//   }
+//
+//   void setRelationshipType(String? value) {
+//     relationshipType = value;
+//     notifyListeners();
+//   }
+//
+//   // ✅ Add this getter to validate all required fields
+//   bool get isValid {
+//     return
+//       firstName.trim().isNotEmpty &&
+//           lastName.trim().isNotEmpty &&
+//           username.trim().isNotEmpty &&
+//           email.trim().isNotEmpty &&
+//           mobile.trim().isNotEmpty &&
+//           gender != null &&
+//           dateOfBirth != null &&
+//           relationshipStatus != null &&
+//           relationshipType != null;
+//   }
+// }
+
 class BasicDetailsProvider with ChangeNotifier {
   File? profileImage;
   String firstName = '';
@@ -95,6 +201,8 @@ class BasicDetailsProvider with ChangeNotifier {
   DateTime? dateOfBirth;
   String? relationshipStatus;
   String? relationshipType;
+  double? latitude;
+  double? longitude;
 
   void setImage(File image) {
     profileImage = image;
@@ -146,18 +254,24 @@ class BasicDetailsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ Add this getter to validate all required fields
+  void setLocation(double lat, double lng) {
+    latitude = lat;
+    longitude = lng;
+    notifyListeners();
+  }
+
   bool get isValid {
-    return
-      firstName.trim().isNotEmpty &&
-          lastName.trim().isNotEmpty &&
-          username.trim().isNotEmpty &&
-          email.trim().isNotEmpty &&
-          mobile.trim().isNotEmpty &&
-          gender != null &&
-          dateOfBirth != null &&
-          relationshipStatus != null &&
-          relationshipType != null;
+    return firstName.trim().isNotEmpty &&
+        lastName.trim().isNotEmpty &&
+        username.trim().isNotEmpty &&
+        email.trim().isNotEmpty &&
+        mobile.trim().isNotEmpty &&
+        gender != null &&
+        dateOfBirth != null &&
+        relationshipStatus != null &&
+        relationshipType != null &&
+        latitude != null &&
+        longitude != null;
   }
 }
 
@@ -174,7 +288,6 @@ class ProfessionStudiesProvider extends ChangeNotifier {
   String? get levelOfStudies => _levelOfStudies;
 
   String? get university => _university;
-
 
   bool get isValid {
     return (_academicField?.isNotEmpty ?? false) &&
@@ -286,8 +399,8 @@ class CredentialsProvider extends ChangeNotifier {
 
   bool get isPasswordMatch =>
       _password.isNotEmpty &&
-          _confirmPassword.isNotEmpty &&
-          _password == _confirmPassword;
+      _confirmPassword.isNotEmpty &&
+      _password == _confirmPassword;
 }
 
 class LoginProvider extends ChangeNotifier {
@@ -302,9 +415,11 @@ class LoginProvider extends ChangeNotifier {
   }
 
   String get email => emailController.text.trim();
+
   String get password => passwordController.text.trim();
 
   bool isEmailValid() => email.toLowerCase().endsWith('@gmail.com');
+
   bool isPasswordValid() => password.length >= 8;
 
   @override
