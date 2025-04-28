@@ -310,9 +310,6 @@
 
 
 
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -347,11 +344,15 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _validateAndLogin(BuildContext context) {
+  Future<void> _validateAndLogin(BuildContext context) async {
     final provider = Provider.of<LoginProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    print('Email entered: ${provider.email}');
+    print('Password entered: ${provider.password}');
 
     if (!provider.isEmailValid()) {
-      _showSnackBar(context, "Only @gmail.com emails are allowed");
+      _showSnackBar(context, "Enter correct email");
       return;
     }
     if (!provider.isPasswordValid()) {
@@ -359,14 +360,26 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    Navigator.pushReplacement(
+    await getLogin(
       context,
-      _noTransition(const HomeScreen()),
+      provider.email,
+      provider.password,
     );
+
+    if (authProvider.loginResponse != null &&
+        authProvider.loginResponse?.status == true) {
+      Navigator.pushReplacement(
+        context,
+        _noTransition(const HomeScreen()),
+      );
+    } else {
+      _showSnackBar(context, "Invalid email or password");
+    }
   }
 
   void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   PageRouteBuilder _noTransition(Widget page) {
@@ -394,7 +407,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 return SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
                     child: IntrinsicHeight(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -421,7 +435,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 24),
-
                           const _Label("Email Address"),
                           const SizedBox(height: 8),
                           _buildTextField(
@@ -430,7 +443,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintText: "Enter email",
                             icon: Icons.email_outlined,
                           ),
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -463,10 +475,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : Icons.visibility_outlined,
                             onIconTap: provider.toggleObscureText,
                           ),
-
                           const SizedBox(height: 24),
-                          _buildButton("Login", onTap: () => _validateAndLogin(context)),
-
+                          _buildButton("Login",
+                              onTap: () => _validateAndLogin(context)),
                           const SizedBox(height: 32),
                           const Center(
                             child: Text(
@@ -489,7 +500,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             },
                           ),
-
                           const SizedBox(height: 10),
                           const Center(
                             child: Text(
@@ -498,7 +508,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -512,7 +521,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 20),
                         ],
                       ),
@@ -543,11 +551,12 @@ class _LoginScreenState extends State<LoginScreen> {
         hintText: hintText,
         suffixIcon: onIconTap != null
             ? IconButton(
-          icon: Icon(icon, color: const Color(0xFF797979)),
-          onPressed: onIconTap,
-        )
+                icon: Icon(icon, color: const Color(0xFF797979)),
+                onPressed: onIconTap,
+              )
             : Icon(icon, color: const Color(0xFF797979)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
           borderSide: const BorderSide(color: Color(0xFF797979)),
@@ -561,11 +570,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildButton(
-      String text, {
-        VoidCallback? onTap,
-        bool isPrimary = true,
-        double widthFactor = 1,
-      }) {
+    String text, {
+    VoidCallback? onTap,
+    bool isPrimary = true,
+    double widthFactor = 1,
+  }) {
     return Center(
       child: SizedBox(
         width: MediaQuery.of(context).size.width * widthFactor,
@@ -598,10 +607,24 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Future<void> getLogin(
+    BuildContext context,
+    String email,
+    String password,
+  ) async {
+    final loginProvider = Provider.of<AuthProvider>(context, listen: false);
+    await loginProvider.getlogin(
+      context,
+      email,
+      password,
+    );
+  }
 }
 
 class _Label extends StatelessWidget {
   final String text;
+
   const _Label(this.text);
 
   @override

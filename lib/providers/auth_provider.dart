@@ -6,12 +6,16 @@ import 'package:campus_connect/utils/show_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 
-class AuthProvider extends ChangeNotifier{
+import '../models/login_model.dart';
+
+class AuthProvider extends ChangeNotifier {
   Registration? _registration;
+  Login? _loginResponse;
 
   bool _isLoading = false;
 
   Registration? get registration => _registration;
+  Login? get loginResponse => _loginResponse;
 
   bool get isLoading => _isLoading;
 
@@ -51,6 +55,29 @@ class AuthProvider extends ChangeNotifier{
     }catch(e){
       ShowToast.showToastError(e.toString());
     }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> getlogin(BuildContext context, String email, String password, ) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _loginResponse = await ApiService.getLogin(context, email, password);
+      if (_loginResponse?.statusCode == 200 && _loginResponse?.status == true) {
+        ShowToast.showToastSuccess(_loginResponse!.message.toString());
+        notifyListeners();
+      } else if (_loginResponse?.statusCode == 400 && _loginResponse?.status == false) {
+        ShowToast.showToastError(_loginResponse!.message.toString());
+        notifyListeners();
+      } else {
+        ShowToast.showToastError(_loginResponse!.errorMsg.toString());
+      }
+    } catch (e) {
+      ShowToast.showToastError(e.toString());
+    } finally {
       _isLoading = false;
       notifyListeners();
     }

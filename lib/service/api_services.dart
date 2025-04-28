@@ -116,7 +116,7 @@ class ApiService {
   }
 
 
-  static Future<Login> getLogin(BuildContext context, String email, String password, String deviceToken) async {
+  static Future<Login> getLogin(BuildContext context, String email, String password) async {
     late Login login;
     Dio dio = Dio();
 
@@ -126,11 +126,12 @@ class ApiService {
         data: {
           "email": email,
           "password": password,
-          "device_token": deviceToken,
+          // "device_token": deviceToken,
         },
         options: Options(
           headers: {
-            // You can set custom headers here if needed
+            // 'Authorization': 'Bearer $token',
+            // 'Content-Type': 'application/json',
           },
         ),
       );
