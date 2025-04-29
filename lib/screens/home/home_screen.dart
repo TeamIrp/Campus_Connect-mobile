@@ -1,11 +1,87 @@
-import 'package:campus_connect/screens/explore/explore_tab_screen.dart';
-import 'package:campus_connect/screens/home/home_tab_screen.dart';
-import 'package:campus_connect/screens/chat/tab/my_chats_tab_screen.dart';
-import 'package:campus_connect/screens/my_profile/my_profile_tab_screen.dart';
-import 'package:campus_connect/screens/publication/publication_tab_screen.dart';
-import 'package:campus_connect/widgets/custom_bottom_navbar.dart';
-import 'package:campus_connect/screens/home/widgets/home_appbar.dart';
+// import 'package:campus_connect/screens/explore/explore_tab_screen.dart';
+// import 'package:campus_connect/screens/home/home_tab_screen.dart';
+// import 'package:campus_connect/screens/chat/tab/my_chats_tab_screen.dart';
+// import 'package:campus_connect/screens/my_profile/my_profile_tab_screen.dart';
+// import 'package:campus_connect/screens/publication/publication_tab_screen.dart';
+// import 'package:campus_connect/widgets/custom_bottom_navbar.dart';
+// import 'package:campus_connect/screens/home/widgets/home_appbar.dart';
+// import 'package:flutter/material.dart';
+//
+// class HomeScreen extends StatefulWidget {
+//   const HomeScreen({Key? key}) : super(key: key);
+//
+//   @override
+//   State<HomeScreen> createState() => _HomeScreenState();
+// }
+//
+// class _HomeScreenState extends State<HomeScreen> {
+//   int currentIndex = 0;
+//
+//   final GlobalKey<MyProfileTabScreenState> profileKey =
+//       GlobalKey<MyProfileTabScreenState>();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final List<Widget> tabs = [
+//       const HomeTabScreen(),
+//       const PublicationTabScreen(),
+//       const ExploreTabScreen(),
+//       const MyChatsTabScreen(),
+//       MyProfileTabScreen(key: profileKey),
+//     ];
+//
+//     return Scaffold(
+//       resizeToAvoidBottomInset: false,
+//       backgroundColor: Colors.white,
+//       appBar: (currentIndex == 0 || currentIndex == 4)
+//           ? null
+//           : PreferredSize(
+//               preferredSize: const Size.fromHeight(70),
+//               child: HomeAppBar(currentIndex: currentIndex),
+//             ),
+//       body: tabs[currentIndex],
+//       bottomNavigationBar: CustomBottomNavbar(
+//         currentIndex: currentIndex,
+//         onTap: (index) {
+//           setState(() {
+//             currentIndex = index;
+//             if (index == 4) {
+//               profileKey.currentState?.resetToMain();
+//             }
+//           });
+//         },
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+//       floatingActionButton: CustomBottomNavbar.floatingNavButton(
+//         isSelected: currentIndex == 2,
+//         onPressed: () => setState(() => currentIndex = 2),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/home_provider.dart';
+import 'home_tab_screen.dart';
+import 'widgets/home_appbar.dart';
+import '../../widgets/custom_bottom_navbar.dart';
+import '../publication/publication_tab_screen.dart';
+import '../explore/explore_tab_screen.dart';
+import '../chat/tab/my_chats_tab_screen.dart';
+import '../my_profile/my_profile_tab_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,45 +92,47 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
-
-  final GlobalKey<MyProfileTabScreenState> profileKey =
-      GlobalKey<MyProfileTabScreenState>();
+  final profileKey = GlobalKey<MyProfileTabScreenState>();
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> tabs = [
-      const HomeTabScreen(),
-      const PublicationTabScreen(),
-      const ExploreTabScreen(),
-      const MyChatsTabScreen(),
-      MyProfileTabScreen(key: profileKey),
-    ];
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      appBar: (currentIndex == 0 || currentIndex == 4)
-          ? null
-          : PreferredSize(
-              preferredSize: const Size.fromHeight(70),
-              child: HomeAppBar(currentIndex: currentIndex),
-            ),
-      body: tabs[currentIndex],
-      bottomNavigationBar: CustomBottomNavbar(
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-            if (index == 4) {
-              profileKey.currentState?.resetToMain();
-            }
-          });
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: CustomBottomNavbar.floatingNavButton(
-        isSelected: currentIndex == 2,
-        onPressed: () => setState(() => currentIndex = 2),
+    return ChangeNotifierProvider(
+      create: (_) => HomeProvider(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
+        appBar: (currentIndex == 0 || currentIndex == 4)
+            ? null
+            : PreferredSize(
+          preferredSize: const Size.fromHeight(70),
+          child: HomeAppBar(currentIndex: currentIndex),
+        ),
+        body: IndexedStack(
+          index: currentIndex,
+          children: [
+            const HomeTabScreen(),
+            const PublicationTabScreen(),
+            const ExploreTabScreen(),
+            const MyChatsTabScreen(),
+            MyProfileTabScreen(key: profileKey),
+          ],
+        ),
+        bottomNavigationBar: CustomBottomNavbar(
+          currentIndex: currentIndex,
+          onTap: (i) {
+            setState(() {
+              currentIndex = i;
+              if (i == 4) profileKey.currentState?.resetToMain();
+            });
+          },
+        ),
+        floatingActionButtonLocation:
+        FloatingActionButtonLocation.centerDocked,
+        floatingActionButton:
+        CustomBottomNavbar.floatingNavButton(
+          isSelected: currentIndex == 2,
+          onPressed: () => setState(() => currentIndex = 2),
+        ),
       ),
     );
   }

@@ -243,7 +243,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../providers/auth_provider.dart'; // adjust the path
+import '../../../providers/auth_provider.dart';
 
 class BasicDetailsTab extends StatefulWidget {
   const BasicDetailsTab({super.key});
@@ -309,11 +309,12 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
         desiredAccuracy: LocationAccuracy.high);
 
     final provider = Provider.of<BasicDetailsProvider>(context, listen: false);
-    provider.setLocation(position.latitude, position.longitude);
+    provider.setLocation(
+        position.latitude.toString(), position.longitude.toString());
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('latitude', position.latitude);
-    await prefs.setDouble('longitude', position.longitude);
+    await prefs.setString('latitude', position.latitude.toString());
+    await prefs.setString('longitude', position.longitude.toString());
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Location saved successfully.')),

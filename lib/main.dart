@@ -1,11 +1,11 @@
 import 'package:campus_connect/providers/auth_provider.dart';
+import 'package:campus_connect/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:campus_connect/screens/authentication/screens/login_screen.dart';
 import 'package:campus_connect/screens/splash_screen.dart';
 import 'package:campus_connect/theme/app_theme.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -54,6 +54,7 @@ class _MyAppState extends State<MyApp> {
             ChangeNotifierProvider(create: (_) => ProfessionStudiesProvider()),
             ChangeNotifierProvider(create: (_) => CredentialsProvider()),
             ChangeNotifierProvider(create: (_) => AuthProvider()),
+            ChangeNotifierProvider(create: (_) => HomeProvider()),
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,

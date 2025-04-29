@@ -14,8 +14,10 @@ class PageDetailsScreen extends StatefulWidget {
   State<PageDetailsScreen> createState() => _PageDetailsScreenState();
 }
 
-class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTickerProviderStateMixin {
-  final DraggableScrollableController _controller = DraggableScrollableController();
+class _PageDetailsScreenState extends State<PageDetailsScreen>
+    with SingleTickerProviderStateMixin {
+  final DraggableScrollableController _controller =
+      DraggableScrollableController();
   bool showOverlayDrawer = false;
   late AnimationController _overlayController;
   late Animation<Offset> _drawerAnimation;
@@ -57,37 +59,37 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
   }
 
   Widget _dot() => Container(
-    width: 3.46,
-    height: 4.5,
-    decoration: BoxDecoration(
-      color: Colors.black,
-      borderRadius: BorderRadius.circular(24),
-    ),
-  );
+        width: 3.46,
+        height: 4.5,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(24),
+        ),
+      );
 
   Widget _galleryImage(String assetPath) => Container(
-    margin: const EdgeInsets.only(right: 10),
-    height: 100,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: Colors.grey[200],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Image.asset(assetPath, fit: BoxFit.cover),
-    ),
-  );
+        margin: const EdgeInsets.only(right: 10),
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.grey[200],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset(assetPath, fit: BoxFit.cover),
+        ),
+      );
 
   Widget _interestIcon(String assetPath) => Container(
-    height: 32,
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-    child: SvgPicture.asset(
-      assetPath,
-      width: 32,
-      height: 32,
-      fit: BoxFit.contain,
-    ),
-  );
+        height: 32,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+        child: SvgPicture.asset(
+          assetPath,
+          width: 32,
+          height: 32,
+          fit: BoxFit.contain,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -578,15 +580,12 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           Row(
                             children: [
                               GestureDetector(
-                                onTap:
-                                    () => showDialog(
-                                      context: context,
-                                      builder:
-                                          (_) => const BadgePopup(
-                                            badgeImage:
-                                                'assets/images/badge1.png',
-                                          ),
-                                    ),
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (_) => const BadgePopup(
+                                    badgeImage: 'assets/images/badge1.png',
+                                  ),
+                                ),
                                 child: Image.asset(
                                   'assets/images/badge1.png',
                                   width: 90,
@@ -595,15 +594,12 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                               ),
                               const SizedBox(width: 12),
                               GestureDetector(
-                                onTap:
-                                    () => showDialog(
-                                      context: context,
-                                      builder:
-                                          (_) => const BadgePopup(
-                                            badgeImage:
-                                                'assets/images/badge2.png',
-                                          ),
-                                    ),
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (_) => const BadgePopup(
+                                    badgeImage: 'assets/images/badge2.png',
+                                  ),
+                                ),
                                 child: Image.asset(
                                   'assets/images/badge1.png',
                                   width: 90,
@@ -626,11 +622,10 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           Row(
                             children: [
                               GestureDetector(
-                                onTap:
-                                    () => showDialog(
-                                      context: context,
-                                      builder: (_) => const RewardPopup(),
-                                    ),
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (_) => const RewardPopup(),
+                                ),
                                 child: Image.asset(
                                   'assets/images/reward1.png',
                                   width: 90,
@@ -695,11 +690,10 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (_) => ChatScreen(
-                                      name: name,
-                                      imagePath: imagePath,
-                                    ),
+                                builder: (_) => ChatScreen(
+                                  name: name,
+                                  imagePath: imagePath,
+                                ),
                               ),
                             );
                           },
@@ -837,25 +831,23 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                                 _closeOverlayDrawer();
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (_) => BlockConfirmationModal(
-                                        onNo: () => Navigator.pop(context),
-                                        onYes: () {
+                                  builder: (_) => BlockConfirmationModal(
+                                    onNo: () => Navigator.pop(context),
+                                    onYes: () {
+                                      Navigator.pop(context);
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            const BlockSuccessModal(),
+                                      );
+                                      Future.delayed(
+                                        const Duration(milliseconds: 1400),
+                                        () {
                                           Navigator.pop(context);
-                                          showDialog(
-                                            context: context,
-                                            builder:
-                                                (_) =>
-                                                    const BlockSuccessModal(),
-                                          );
-                                          Future.delayed(
-                                            const Duration(milliseconds: 1400),
-                                            () {
-                                              Navigator.pop(context);
-                                            },
-                                          );
                                         },
-                                      ),
+                                      );
+                                    },
+                                  ),
                                 );
                               },
                               child: Row(
@@ -879,25 +871,23 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                                 _closeOverlayDrawer();
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (_) => ReportConfirmationModal(
-                                        onNo: () => Navigator.pop(context),
-                                        onYes: () {
+                                  builder: (_) => ReportConfirmationModal(
+                                    onNo: () => Navigator.pop(context),
+                                    onYes: () {
+                                      Navigator.pop(context);
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            const ReportSuccessModal(),
+                                      );
+                                      Future.delayed(
+                                        const Duration(milliseconds: 1400),
+                                        () {
                                           Navigator.pop(context);
-                                          showDialog(
-                                            context: context,
-                                            builder:
-                                                (_) =>
-                                                    const ReportSuccessModal(),
-                                          );
-                                          Future.delayed(
-                                            const Duration(milliseconds: 1400),
-                                            () {
-                                              Navigator.pop(context);
-                                            },
-                                          );
                                         },
-                                      ),
+                                      );
+                                    },
+                                  ),
                                 );
                               },
                               child: Row(
@@ -955,4 +945,3 @@ Widget _infoRow(String left, String right, {bool isBoldRight = false}) {
     ],
   );
 }
-

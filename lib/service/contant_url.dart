@@ -7,4 +7,5 @@ class ConstantUrl {
   static const String baseUrl = "https://campusconnect-web.irpinnovative.com/api/";
   static const String register = "userregistration";
   static const String login = "userlogin";
+  static const String home = "usergethome";
 }

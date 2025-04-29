@@ -371,8 +371,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           professionStudiesProvider.levelOfStudies ?? '',
           professionStudiesProvider.university ?? '',
           basicProvider.profileImage ?? File(''),
-          basicProvider.latitude ?? 0.0,
-          basicProvider.longitude ?? 0.0,
+          basicProvider.latitude?.toString() ?? '0',
+          basicProvider.longitude?.toString() ?? '0',
         );
 
         Future.delayed(const Duration(seconds: 4), () {
@@ -464,8 +464,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     String levelOfStudies,
     String universitySchool,
     File image,
-    double latitude,
-    double longitude,
+    String latitude,
+    String longitude,
   ) async {
     final registerProvider = Provider.of<AuthProvider>(context, listen: false);
     await registerProvider.getRegistration(
