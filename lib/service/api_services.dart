@@ -384,6 +384,111 @@ class ApiService {
 
 
 
+
+
+  static Future<Registration> updateProfile(
+      BuildContext context,
+      String firstname,
+      String lastname,
+      String username,
+      String emailAddress,
+      String mobileNo,
+      String password,
+      String gender,
+      String dob,
+      String relationshipStatus,
+      String typeOfRelationship,
+      String currentIntendedOccupation,
+      String academicField,
+      String professionalGoalsProjects,
+      String passwordConfirmation,
+      String levelOfStudies,
+      String universitySchool,
+      File image,
+      String latitude,
+      String longitude,
+      ) async {
+    late Registration registration;
+    Dio dio = Dio();
+    FormData data = FormData.fromMap({
+      "firstname": firstname,
+      "lastname": lastname,
+      "username": username,
+      "email": emailAddress,
+      "mobile_number": mobileNo,
+      "password": password,
+      "gender": gender,
+      "date_of_birth": dob,
+      "relationship_status": relationshipStatus,
+      "type_of_relationship": typeOfRelationship,
+      "current_intended_occupation": currentIntendedOccupation,
+      "academic_field": academicField,
+      "professional_goals_projects": professionalGoalsProjects,
+      "password_confirmation": passwordConfirmation,
+      "level_of_studies": levelOfStudies,
+      "university_school": universitySchool,
+      "img": await MultipartFile.fromFile(image.path),
+      "latitude": latitude,
+      "longitude": longitude,
+    });
+
+    try {
+      final response = await DioService().dio.post(
+        ConstantUrl.register,
+        data: data,
+        options: Options(
+          headers: {},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        registration = Registration.fromJson(response.data);
+        return registration;
+      } else {
+        return Registration(
+          errorMsg: 'Api failed with status code : ${response.statusCode}',
+          isError: true,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage;
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+          errorMessage = "Connection timeout";
+          break;
+        case DioExceptionType.sendTimeout:
+          errorMessage = "Something went wrong";
+          break;
+        case DioExceptionType.receiveTimeout:
+          errorMessage = "Something went wrong";
+          break;
+        case DioExceptionType.badCertificate:
+          errorMessage = "Something went wrong";
+          break;
+        case DioExceptionType.badResponse:
+          errorMessage = "Too many requests retrying...";
+          await _retryRequestWithDelay(dio, e.requestOptions, retryAfter: 5);
+          break;
+        case DioExceptionType.cancel:
+          errorMessage = "Something went wrong";
+          break;
+        case DioExceptionType.connectionError:
+          errorMessage = "No internet connection";
+          break;
+        case DioExceptionType.unknown:
+          errorMessage = "No internet connection";
+          break;
+        default:
+          errorMessage = "Something went wrong";
+          break;
+      }
+      return Registration(errorMsg: errorMessage, isError: true);
+    } catch (e) {
+      return Registration(errorMsg: 'An error occurred $e', isError: true);
+    }
+  }
+
+
   static Future<void> _retryRequestWithDelay(
     Dio dio,
     RequestOptions requestOptions, {

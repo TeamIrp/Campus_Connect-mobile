@@ -8,4 +8,5 @@ class ConstantUrl {
   static const String register = "userregistration";
   static const String login = "userlogin";
   static const String home = "usergethome";
+  static const String updateProfile = "editprofile";
 }

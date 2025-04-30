@@ -348,9 +348,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final provider = Provider.of<LoginProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    print('Email entered: ${provider.email}');
-    print('Password entered: ${provider.password}');
-
     if (!provider.isEmailValid()) {
       _showSnackBar(context, "Enter correct email");
       return;
