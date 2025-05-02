@@ -308,11 +308,10 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../providers/auth_provider.dart';
 import 'forgot_password_screen.dart';
@@ -605,17 +604,42 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+// Use the shared preference to store the  token and userId details of the user.
+//   Future<void> getLogin(
+//     BuildContext context,
+//     String email,
+//     String password,
+//   ) async {
+//     final loginProvider = Provider.of<AuthProvider>(context, listen: false);
+//     await loginProvider.getlogin(context, email, password,);
+//     if(loginProvider.loginResponse?.statusCode == 200 && loginProvider.loginResponse?.status == true){
+//       print("Token : ${loginProvider.loginResponse?.data?.token}");
+//       print("UserId : ${loginProvider.loginResponse?.data?.userDetails?.id}");
+//
+//     }
+//   }
+
   Future<void> getLogin(
     BuildContext context,
     String email,
     String password,
   ) async {
     final loginProvider = Provider.of<AuthProvider>(context, listen: false);
-    await loginProvider.getlogin(
-      context,
-      email,
-      password,
-    );
+    await loginProvider.getlogin(context, email, password);
+
+    if (loginProvider.loginResponse?.statusCode == 200 &&
+        loginProvider.loginResponse?.status == true) {
+      final token = loginProvider.loginResponse?.data?.token;
+      final userId = loginProvider.loginResponse?.data?.userDetails?.id;
+
+      // print("Token : $token");
+      // print("UserId : $userId");
+
+      // ✅ Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token ?? '');
+      await prefs.setString('userId', userId?.toString() ?? '');
+    }
   }
 }
 

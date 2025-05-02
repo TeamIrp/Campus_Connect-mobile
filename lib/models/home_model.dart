@@ -38,7 +38,9 @@ class Home {
 
 class Datum {
   final int? id;
-  final String? profilePicture;
+  final int? isAdmin;
+  final String? userid;
+  final dynamic profilePicture;
   final dynamic otherImages;
   final String? firstName;
   final String? lastName;
@@ -52,48 +54,50 @@ class Datum {
   final String? academicfield;
   final String? levelofstudies;
   final String? universityorschoolattended;
-  final String? currentacadmicproject;
+  final String? currentacademicproject;
   final String? professionalgoals;
   final dynamic selectedCustomerStatus;
+  final String? subscriptionType;
   final String? username;
-  final String? city;
-  final String? region;
+  final dynamic city;
+  final dynamic region;
   final dynamic religion;
-  final String? community;
-  final String? subcommunity;
-  final String? astrological;
-  final String? interests;
-  final String? height;
-  final String? anyDisability;
-  final String? complexion;
-  final String? bodytype;
-  final String? diet;
-  final String? drink;
-  final String? smoker;
-  final String? gendersought;
-  final String? age;
-  final String? maximumDistance;
-  final String? personality;
-  final String? size;
-  final String? weight;
-  final String? onlymatch;
-  final String? newinteraction;
-  final String? like;
-  final String? massage;
+  final dynamic community;
+  final dynamic subcommunity;
+  final dynamic astrological;
+  final dynamic interests;
+  final dynamic height;
+  final dynamic anyDisability;
+  final dynamic complexion;
+  final dynamic bodytype;
+  final dynamic diet;
+  final dynamic drink;
+  final dynamic smoker;
+  final dynamic gendersought;
+  final dynamic age;
+  final dynamic maximumDistance;
+  final dynamic personality;
+  final dynamic size;
+  final dynamic weight;
+  final dynamic onlymatch;
+  final dynamic newinteraction;
+  final dynamic like;
+  final dynamic message;
   final String? latitude;
   final String? longitude;
-  final String? verification;
-  final String? aboutcustomer;
-  final String? discription;
-  final String? universitycourse;
+  final dynamic verification;
+  final dynamic aboutcustomer;
+  final dynamic description;
   final dynamic registered;
-  final String? password;
+  final dynamic universitycourse;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final double? distance;
 
   Datum({
     this.id,
+    this.isAdmin,
+    this.userid,
     this.profilePicture,
     this.otherImages,
     this.firstName,
@@ -108,9 +112,10 @@ class Datum {
     this.academicfield,
     this.levelofstudies,
     this.universityorschoolattended,
-    this.currentacadmicproject,
+    this.currentacademicproject,
     this.professionalgoals,
     this.selectedCustomerStatus,
+    this.subscriptionType,
     this.username,
     this.city,
     this.region,
@@ -135,15 +140,14 @@ class Datum {
     this.onlymatch,
     this.newinteraction,
     this.like,
-    this.massage,
+    this.message,
     this.latitude,
     this.longitude,
     this.verification,
     this.aboutcustomer,
-    this.discription,
-    this.universitycourse,
+    this.description,
     this.registered,
-    this.password,
+    this.universitycourse,
     this.createdAt,
     this.updatedAt,
     this.distance,
@@ -155,6 +159,8 @@ class Datum {
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["id"],
+    isAdmin: json["is_admin"],
+    userid: json["userid"],
     profilePicture: json["profile_picture"],
     otherImages: json["other_images"],
     firstName: json["first_name"],
@@ -169,9 +175,10 @@ class Datum {
     academicfield: json["academicfield"],
     levelofstudies: json["levelofstudies"],
     universityorschoolattended: json["universityorschoolattended"],
-    currentacadmicproject: json["currentacadmicproject"],
+    currentacademicproject: json["currentacademicproject"],
     professionalgoals: json["professionalgoals"],
     selectedCustomerStatus: json["selectedCustomerStatus"],
+    subscriptionType: json["subscription_type"],
     username: json["username"],
     city: json["city"],
     region: json["region"],
@@ -196,15 +203,14 @@ class Datum {
     onlymatch: json["onlymatch"],
     newinteraction: json["newinteraction"],
     like: json["like"],
-    massage: json["massage"],
+    message: json["message"],
     latitude: json["latitude"],
     longitude: json["longitude"],
     verification: json["verification"],
     aboutcustomer: json["aboutcustomer"],
-    discription: json["discription"],
-    universitycourse: json["universitycourse"],
+    description: json["description"],
     registered: json["registered"],
-    password: json["password"],
+    universitycourse: json["universitycourse"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     distance: json["distance"]?.toDouble(),
@@ -212,6 +218,8 @@ class Datum {
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "is_admin": isAdmin,
+    "userid": userid,
     "profile_picture": profilePicture,
     "other_images": otherImages,
     "first_name": firstName,
@@ -226,9 +234,10 @@ class Datum {
     "academicfield": academicfield,
     "levelofstudies": levelofstudies,
     "universityorschoolattended": universityorschoolattended,
-    "currentacadmicproject": currentacadmicproject,
+    "currentacademicproject": currentacademicproject,
     "professionalgoals": professionalgoals,
     "selectedCustomerStatus": selectedCustomerStatus,
+    "subscription_type": subscriptionType,
     "username": username,
     "city": city,
     "region": region,
@@ -253,15 +262,14 @@ class Datum {
     "onlymatch": onlymatch,
     "newinteraction": newinteraction,
     "like": like,
-    "massage": massage,
+    "message": message,
     "latitude": latitude,
     "longitude": longitude,
     "verification": verification,
     "aboutcustomer": aboutcustomer,
-    "discription": discription,
-    "universitycourse": universitycourse,
+    "description": description,
     "registered": registered,
-    "password": password,
+    "universitycourse": universitycourse,
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
     "distance": distance,

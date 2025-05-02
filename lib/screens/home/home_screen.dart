@@ -92,6 +92,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final profileKey = GlobalKey<MyProfileTabScreenState>();
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => HomeProvider(),

@@ -198,62 +198,7 @@ class ApiService {
     }
   }
 
-
-  static Future<Home> getHome(
-      BuildContext context,
-      int id,
-      String profilePicture,
-      dynamic otherImages,
-      String firstName,
-      String lastName,
-      String mobileNumber,
-      String gender,
-      String dateofbirth,
-      String relationship,
-      String relationshipsought,
-      String intendedOccuption,
-      String academicfield,
-      String levelofstudies,
-      String universityorschoolattended,
-      String currentacadmicproject,
-      String professionalgoals,
-      dynamic selectedCustomerStatus,
-      String username,
-      String city,
-      String region,
-      dynamic religion,
-      String community,
-      String subcommunity,
-      String astrological,
-      String interests,
-      String height,
-      String anyDisability,
-      String complexion,
-      String bodytype,
-      String diet,
-      String drink,
-      String smoker,
-      String gendersought,
-      String age,
-      String maximumDistance,
-      String personality,
-      String size,
-      String weight,
-      String onlymatch,
-      String newinteraction,
-      String like,
-      String massage,
-      String latitude,
-      String longitude,
-      String verification,
-      String aboutcustomer,
-      String discription,
-      String universitycourse,
-      dynamic registered,
-      DateTime createdAt,
-      DateTime updatedAt,
-      double distance,
-      String deviceToken) async {
+  static Future<Home> getHome(BuildContext context, String userId, String token) async {
     late Home home;
     Dio dio = Dio();
 
@@ -261,64 +206,12 @@ class ApiService {
       final response = await DioService().dio.post(
             ConstantUrl.home,
             data: {
-              "id": id,
-              "profile_picture": profilePicture,
-              "other_images": otherImages,
-              "first_name": firstName,
-              "last_name": lastName,
-              "mobile_number": mobileNumber,
-              "gender": gender,
-              "dateofbirth": dateofbirth,
-              "relationship": relationship,
-              "relationshipsought": relationshipsought,
-              "intendedOccuption": intendedOccuption,
-              "academicfield": academicfield,
-              "levelofstudies": levelofstudies,
-              "universityorschoolattended": universityorschoolattended,
-              "currentacadmicproject": currentacadmicproject,
-              "professionalgoals": professionalgoals,
-              "selectedCustomerStatus": selectedCustomerStatus,
-              "username": username,
-              "city": city,
-              "region": region,
-              "religion": religion,
-              "community": community,
-              "subcommunity": subcommunity,
-              "astrological": astrological,
-              "interests": interests,
-              "height": height,
-              "anyDisability": anyDisability,
-              "complexion": complexion,
-              "bodytype": bodytype,
-              "diet": diet,
-              "drink": drink,
-              "smoker": smoker,
-              "gendersought": gendersought,
-              "age": age,
-              "maximum_distance": maximumDistance,
-              "personality": personality,
-              "size": size,
-              "weight": weight,
-              "onlymatch": onlymatch,
-              "newinteraction": newinteraction,
-              "like": like,
-              "massage": massage,
-              "latitude": latitude,
-              "longitude": longitude,
-              "verification": verification,
-              "aboutcustomer": aboutcustomer,
-              "discription": discription,
-              "universitycourse": universitycourse,
-              "registered": registered,
-              "created_at": createdAt?.toIso8601String(),
-              "updated_at": updatedAt?.toIso8601String(),
-              "distance": distance,
-              "device_token": deviceToken,
+              "user_id": userId,
             },
             options: Options(
               headers: {
-                // 'Authorization': 'Bearer $token',
-                // 'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token',
+                'Content-Type': 'application/json',
               },
             ),
           );
@@ -385,29 +278,28 @@ class ApiService {
 
 
 
-
   static Future<Registration> updateProfile(
-      BuildContext context,
-      String firstname,
-      String lastname,
-      String username,
-      String emailAddress,
-      String mobileNo,
-      String password,
-      String gender,
-      String dob,
-      String relationshipStatus,
-      String typeOfRelationship,
-      String currentIntendedOccupation,
-      String academicField,
-      String professionalGoalsProjects,
-      String passwordConfirmation,
-      String levelOfStudies,
-      String universitySchool,
-      File image,
-      String latitude,
-      String longitude,
-      ) async {
+    BuildContext context,
+    String firstname,
+    String lastname,
+    String username,
+    String emailAddress,
+    String mobileNo,
+    String password,
+    String gender,
+    String dob,
+    String relationshipStatus,
+    String typeOfRelationship,
+    String currentIntendedOccupation,
+    String academicField,
+    String professionalGoalsProjects,
+    String passwordConfirmation,
+    String levelOfStudies,
+    String universitySchool,
+    File image,
+    String latitude,
+    String longitude,
+  ) async {
     late Registration registration;
     Dio dio = Dio();
     FormData data = FormData.fromMap({
@@ -434,12 +326,12 @@ class ApiService {
 
     try {
       final response = await DioService().dio.post(
-        ConstantUrl.register,
-        data: data,
-        options: Options(
-          headers: {},
-        ),
-      );
+            ConstantUrl.register,
+            data: data,
+            options: Options(
+              headers: {},
+            ),
+          );
 
       if (response.statusCode == 200) {
         registration = Registration.fromJson(response.data);
@@ -487,7 +379,6 @@ class ApiService {
       return Registration(errorMsg: 'An error occurred $e', isError: true);
     }
   }
-
 
   static Future<void> _retryRequestWithDelay(
     Dio dio,

@@ -59,7 +59,6 @@
 //         }
 //       },
 //       child: Container(
-//
 //         decoration: BoxDecoration(
 //           color: Colors.white,
 //           borderRadius: BorderRadius.circular(20),
@@ -68,7 +67,6 @@
 //           ],
 //         ),
 //         child: Column(
-//
 //           children: [
 //             // Image section with overlays
 //             Expanded(
@@ -348,20 +346,11 @@
 //     );
 //   }
 // }
-
-
-
-
-
+//
+//
 
 
 // ----------------------------------------------------------------------------
-
-
-
-
-
-
 
 
 import 'package:flutter/material.dart';
@@ -383,17 +372,31 @@ class _ProfileCardState extends State<ProfileCard> {
 
   @override
   Widget build(BuildContext context) {
-    final users      = context.select((HomeProvider p) => p.users);
-    final imagePaths = context.select((HomeProvider p) => p.imagePaths);
+    final tag = context.select((HomeProvider p) => p.tags);
+    final name = context.select((HomeProvider p) => p.name);
+    final age = context.select((HomeProvider p) => p.age);
+    final distance = context.select((HomeProvider p) => p.distance);
+    final imagePath = context.select((HomeProvider p) => p.imagePath);
+    final verification = context.select((HomeProvider p) => p.verification);
+    final aboutUser = context.select((HomeProvider p) => p.aboutUser);
+
+    final user = {
+      'tag': tag,
+      'name': name,
+      'age': age,
+      'distance': distance,
+      'verification': verification,
+      'about': aboutUser,
+    };
 
     return PageView.builder(
       controller: _pageController,
-      itemCount: imagePaths.length,
+      itemCount: 1,
       physics: const PageScrollPhysics(),
       scrollDirection: Axis.horizontal,
       itemBuilder: (ctx, i) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: _buildCard(imagePaths[i], users[i]),
+        child: _buildCard(imagePath, user),
       ),
     );
   }
@@ -402,12 +405,9 @@ class _ProfileCardState extends State<ProfileCard> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTapUp: (details) {
-        final RenderBox box =
-        context.findRenderObject() as RenderBox;
-        final localPosition =
-        box.globalToLocal(details.globalPosition);
-        final buttonAreaTop =
-            MediaQuery.of(context).size.height * 0.65;
+        final RenderBox box = context.findRenderObject() as RenderBox;
+        final localPosition = box.globalToLocal(details.globalPosition);
+        final buttonAreaTop = MediaQuery.of(context).size.height * 0.65;
         if (localPosition.dy < buttonAreaTop) {
           Navigator.of(context).push(
             PageRouteBuilder(
@@ -429,26 +429,28 @@ class _ProfileCardState extends State<ProfileCard> {
         ),
         child: Column(
           children: [
-            // Image + overlays
             Expanded(
               flex: 4,
               child: ClipRRect(
                 borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20)),
+                    const BorderRadius.vertical(top: Radius.circular(20)),
                 child: LayoutBuilder(
                   builder: (c, constr) => Stack(
                     children: [
                       SizedBox.expand(
-                        child:
-                        Image.asset(imagePath, fit: BoxFit.cover),
+                        child: Image.asset(
+                          imagePath.isNotEmpty
+                              ? imagePath
+                              : 'assets/images/sample_image1.png',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Positioned(
                         left: constr.maxWidth * 0.03,
                         right: constr.maxWidth * 0.03,
                         bottom: constr.maxHeight * 0.03,
                         child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (user['tag'] == 'premium')
@@ -459,29 +461,27 @@ class _ProfileCardState extends State<ProfileCard> {
                             Stack(
                               children: [
                                 Row(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Flexible(
                                       child: Text(
                                         '${user['name']}, ${user['age']}',
                                         style: const TextStyle(
                                           fontFamily: 'Inter',
-                                          fontWeight:
-                                          FontWeight.w700,
+                                          fontWeight: FontWeight.w700,
                                           fontSize: 24,
                                           color: Colors.white,
                                         ),
-                                        overflow:
-                                        TextOverflow.ellipsis,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    SvgPicture.asset(
-                                      'assets/images/green_tick.svg',
-                                      width: 24,
-                                      height: 24,
-                                    ),
+                                    if (user['verification'] == 1)
+                                      SvgPicture.asset(
+                                        'assets/images/green_tick.svg',
+                                        width: 24,
+                                        height: 24,
+                                      ),
                                   ],
                                 ),
                                 Positioned(
@@ -492,16 +492,12 @@ class _ProfileCardState extends State<ProfileCard> {
                                     width: 90,
                                     height: 25,
                                     decoration: BoxDecoration(
-                                      color:
-                                      const Color(0xFFFAE8FF),
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          20),
+                                      color: const Color(0xFFFAE8FF),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment
-                                          .center,
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Icon(
                                           Icons.location_on,
@@ -511,11 +507,9 @@ class _ProfileCardState extends State<ProfileCard> {
                                         const SizedBox(width: 4),
                                         Text(
                                           '${user['distance']} Away',
-                                          style:
-                                          const TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 10,
-                                            fontWeight:
-                                            FontWeight.w500,
+                                            fontWeight: FontWeight.w500,
                                             color: Colors.black,
                                           ),
                                         ),
@@ -536,9 +530,9 @@ class _ProfileCardState extends State<ProfileCard> {
                               ),
                             ),
                             const SizedBox(height: 2),
-                            const Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                              style: TextStyle(
+                            Text(
+                              user['about'] ?? '',
+                              style: const TextStyle(
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w300,
                                 fontSize: 12,
@@ -553,8 +547,6 @@ class _ProfileCardState extends State<ProfileCard> {
                 ),
               ),
             ),
-
-            // action buttons
             Expanded(
               flex: 1,
               child: Center(
@@ -566,18 +558,14 @@ class _ProfileCardState extends State<ProfileCard> {
                       icon: Icons.close,
                       iconSize: 18,
                       iconColor: Colors.white,
-                      onPressed: () =>
-                          Navigator.of(context).push(
-                            PageRouteBuilder(
-                              pageBuilder: (_, __, ___) =>
-                                  PageDetailsScreen(
-                                      imagePath: imagePath),
-                              transitionDuration:
-                              Duration.zero,
-                              reverseTransitionDuration:
-                              Duration.zero,
-                            ),
-                          ),
+                      onPressed: () => Navigator.of(context).push(
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) =>
+                              PageDetailsScreen(imagePath: imagePath),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 16),
                     _circleButton(
@@ -585,9 +573,7 @@ class _ProfileCardState extends State<ProfileCard> {
                       icon: Icons.favorite,
                       iconSize: 25,
                       iconColor: Colors.white,
-                      onPressed: () {
-                        // TODO: favorite logic
-                      },
+                      onPressed: () {},
                     ),
                     const SizedBox(width: 16),
                     _circleButton(
@@ -629,9 +615,10 @@ class _ProfileCardState extends State<ProfileCard> {
             shape: BoxShape.circle,
             boxShadow: const [
               BoxShadow(
-                  color: Color(0x66000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 4)),
+                color: Color(0x66000000),
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
             ],
           ),
           child: Center(child: Icon(icon, size: iconSize, color: iconColor)),
@@ -639,7 +626,6 @@ class _ProfileCardState extends State<ProfileCard> {
       );
 }
 
-// Tags...
 class PremiumTag extends StatelessWidget {
   const PremiumTag({Key? key}) : super(key: key);
 
