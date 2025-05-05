@@ -349,9 +349,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           builder: (context) => const ToastModal(),
         );
 
-        print({'Latitude : ${basicProvider.latitude}'});
-        print({'Longitude : ${basicProvider.longitude}'});
-
         await getRegister(
           context,
           basicProvider.firstName,
@@ -444,6 +441,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
+
 
   Future<void> getRegister(
     BuildContext context,

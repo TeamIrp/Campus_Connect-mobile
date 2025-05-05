@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/login_model.dart';
 import '../models/registration_model.dart';
+import '../models/update_profile_model.dart';
 import 'contant_url.dart';
 import 'dio_service.dart';
 
@@ -198,7 +199,8 @@ class ApiService {
     }
   }
 
-  static Future<Home> getHome(BuildContext context, String userId, String token) async {
+  static Future<Home> getHome(
+      BuildContext context, String userId, String token) async {
     late Home home;
     Dio dio = Dio();
 
@@ -277,12 +279,12 @@ class ApiService {
 
 
 
-
-  static Future<Registration> updateProfile(
+  static Future<MyProfile> updateProfile(
     BuildContext context,
+    File image,
     String firstname,
     String lastname,
-    String username,
+    String userName,
     String emailAddress,
     String mobileNo,
     String password,
@@ -290,38 +292,97 @@ class ApiService {
     String dob,
     String relationshipStatus,
     String typeOfRelationship,
-    String currentIntendedOccupation,
+    String currentAcademic,
     String academicField,
     String professionalGoalsProjects,
     String passwordConfirmation,
     String levelOfStudies,
     String universitySchool,
-    File image,
     String latitude,
     String longitude,
+    String city,
+    String region,
+    String religion,
+    String community,
+    String subCommunity,
+    String astrological,
+    String interests,
+    String height,
+    String anyDisability,
+    String complexion,
+    String bodytype,
+    String diet,
+    String drink,
+    String smoker,
+    String genderSought,
+    String age,
+    String maximumDistance,
+    String personality,
+    String size,
+    String weight,
+    String onlymatch,
+    String newInteraction,
+    String like,
+    String message,
+    String verification,
+    String aboutCustomer,
+    String description,
+    String universityCourse,
+    String userId,
+    String intendedOccuption,
+    String relationshipSought,
+    String professionalGoals,
   ) async {
-    late Registration registration;
+    late MyProfile updateProfile;
     Dio dio = Dio();
     FormData data = FormData.fromMap({
+      "user_image": await MultipartFile.fromFile(image.path),
       "firstname": firstname,
       "lastname": lastname,
-      "username": username,
       "email": emailAddress,
       "mobile_number": mobileNo,
-      "password": password,
       "gender": gender,
-      "date_of_birth": dob,
-      "relationship_status": relationshipStatus,
-      "type_of_relationship": typeOfRelationship,
-      "current_intended_occupation": currentIntendedOccupation,
+      "dateofbirth": dob,
+      "relationship": relationshipStatus,
+      "relationshipsought": relationshipSought,
+      "intendedOccuption": intendedOccuption,
       "academic_field": academicField,
-      "professional_goals_projects": professionalGoalsProjects,
-      "password_confirmation": passwordConfirmation,
       "level_of_studies": levelOfStudies,
       "university_school": universitySchool,
-      "img": await MultipartFile.fromFile(image.path),
+      "current_academic": currentAcademic,
+      "professionalgoals": professionalGoals,
+      "username": userName,
+      "city": city,
+      "region": region,
+      "religion": religion,
+      "community": community,
+      "subcommunity": subCommunity,
+      "astrological": astrological,
+      "interests": interests,
+      "height": height,
+      "anyDisability": anyDisability,
+      "complexion": complexion,
+      "bodytype": bodytype,
+      "diet": diet,
+      "drink": drink,
+      "smoker": smoker,
+      "gendersought": genderSought,
+      "age": age,
+      "maximum_distance": maximumDistance,
+      "personality": personality,
+      "size": size,
+      "weight": weight,
+      "onlymatch": onlymatch,
+      "newinteraction": newInteraction,
+      "like": like,
+      "message": message,
       "latitude": latitude,
       "longitude": longitude,
+      "verification": verification,
+      "aboutcustomer": aboutCustomer,
+      "description": description,
+      "universitycourse": universityCourse,
+      "user_id": userId,
     });
 
     try {
@@ -334,10 +395,10 @@ class ApiService {
           );
 
       if (response.statusCode == 200) {
-        registration = Registration.fromJson(response.data);
-        return registration;
+        updateProfile = MyProfile.fromJson(response.data);
+        return updateProfile;
       } else {
-        return Registration(
+        return MyProfile(
           errorMsg: 'Api failed with status code : ${response.statusCode}',
           isError: true,
         );
@@ -349,24 +410,16 @@ class ApiService {
           errorMessage = "Connection timeout";
           break;
         case DioExceptionType.sendTimeout:
-          errorMessage = "Something went wrong";
-          break;
         case DioExceptionType.receiveTimeout:
-          errorMessage = "Something went wrong";
-          break;
         case DioExceptionType.badCertificate:
+        case DioExceptionType.cancel:
           errorMessage = "Something went wrong";
           break;
         case DioExceptionType.badResponse:
           errorMessage = "Too many requests retrying...";
           await _retryRequestWithDelay(dio, e.requestOptions, retryAfter: 5);
           break;
-        case DioExceptionType.cancel:
-          errorMessage = "Something went wrong";
-          break;
         case DioExceptionType.connectionError:
-          errorMessage = "No internet connection";
-          break;
         case DioExceptionType.unknown:
           errorMessage = "No internet connection";
           break;
@@ -374,11 +427,12 @@ class ApiService {
           errorMessage = "Something went wrong";
           break;
       }
-      return Registration(errorMsg: errorMessage, isError: true);
+      return MyProfile(errorMsg: errorMessage, isError: true);
     } catch (e) {
-      return Registration(errorMsg: 'An error occurred $e', isError: true);
+      return MyProfile(errorMsg: 'An error occurred $e', isError: true);
     }
   }
+
 
   static Future<void> _retryRequestWithDelay(
     Dio dio,

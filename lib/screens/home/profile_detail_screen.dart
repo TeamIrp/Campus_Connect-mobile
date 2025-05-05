@@ -683,7 +683,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                             String name =
                                 'Bence Borg'; // Replace with actual dynamic name
                             String imagePath =
-                                'assets/images/bence_borg.png'; // Replace with actual imagePath
+                                'assets/images/sample_image1.png'; // Replace with actual imagePath
 
                             Navigator.push(
                               context,

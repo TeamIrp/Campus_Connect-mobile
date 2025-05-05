@@ -341,16 +341,27 @@
 //     );
 //   }
 // }
+//
 
 // ------------------------------------------------------------------------------------------
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/my_profile_provider.dart';
-import '../../../../widgets/toast_modals.dart';
 import '../../widgets/profile_appbar.dart';
 
-class MyProfileStepThreeScreen extends StatelessWidget {
+class MyProfileStepThreeScreen extends StatefulWidget {
   const MyProfileStepThreeScreen({super.key});
+
+  @override
+  State<MyProfileStepThreeScreen> createState() =>
+      _MyProfileStepThreeScreenState();
+}
+
+class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
+  final _formKey = GlobalKey<FormState>();
 
   Widget _buildChipSelector(BuildContext context) {
     final provider = context.watch<ProfileProvider>();
@@ -390,7 +401,7 @@ class MyProfileStepThreeScreen extends StatelessWidget {
     int maxLines = 1,
     bool isNumber = false,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
@@ -407,9 +418,18 @@ class MyProfileStepThreeScreen extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(width: 1, color: Color(0xFF797979)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Required';
+        }
+        return null;
+      },
     );
   }
 
@@ -457,143 +477,316 @@ class MyProfileStepThreeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: const ProfileAppBar(title: 'My Profile'),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLabel('Profession and Studies Details',
-                      fontWeight: FontWeight.w600, fontSize: 18),
-                  const SizedBox(height: 20),
-                  _buildLabel('Current or intended occupation'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                      'Software Engineer', provider.occupationController),
-                  const SizedBox(height: 20),
-                  _buildLabel('University Course'),
-                  const SizedBox(height: 8),
-                  _buildTextField('Data Science', provider.courseController),
-                  const SizedBox(height: 20),
-                  _buildLabel('Level of studies'),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: provider.selectedStudyLevel,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: Color(0xFF797979), width: 1),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel('Profession and Studies Details',
+                        fontWeight: FontWeight.w600, fontSize: 18),
+                    const SizedBox(height: 20),
+                    _buildLabel('Current or intended occupation'),
+                    const SizedBox(height: 8),
+                    _buildTextField(
+                        'Software Engineer', provider.occupationController),
+                    const SizedBox(height: 20),
+                    _buildLabel('University Course'),
+                    const SizedBox(height: 8),
+                    _buildTextField('Data Science', provider.courseController),
+                    const SizedBox(height: 20),
+                    _buildLabel('Level of studies'),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: provider.selectedStudyLevel,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF797979)),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                      items: [
+                        'Bachelor\'s degree 1',
+                        'Bachelor\'s degree 2',
+                        'Bachelor\'s degree 3',
+                      ]
+                          .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
+                      onChanged: (value) =>
+                          provider.setSelectedStudyLevel(value),
+                      validator: (value) =>
+                          value == null ? 'Please select a level' : null,
                     ),
-                    items: [
-                      'Bachelor\'s degree 1',
-                      'Bachelor\'s degree 2',
-                      'Bachelor\'s degree 3',
-                    ]
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (value) => provider.setSelectedStudyLevel(value),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildLabel('University or school attended'),
-                  const SizedBox(height: 8),
-                  _buildTextField(
-                      'Your University', provider.universityController),
-                  const SizedBox(height: 20),
-                  _buildLabel('Academic Project'),
-                  const SizedBox(height: 8),
-                  _buildTextField('Your academic project details',
-                      provider.academicProjectController,
-                      maxLines: 5),
-                  const SizedBox(height: 20),
-                  _buildLabel('Professional Project'),
-                  const SizedBox(height: 8),
-                  _buildTextField('Your professional project details',
-                      provider.professionalProjectController,
-                      maxLines: 5),
-                  const SizedBox(height: 30),
-                  _buildLabel('Physical criteria',
-                      fontWeight: FontWeight.w600, fontSize: 18),
-                  const SizedBox(height: 20),
-                  _buildLabel('Size'),
-                  const SizedBox(height: 8),
-                  _buildChipSelector(context),
-                  const SizedBox(height: 20),
-                  _buildLabel('Weight/silhouette (Kg)'),
-                  const SizedBox(height: 8),
-                  _buildTextField('e.g. 70', provider.weightController,
-                      isNumber: true),
-                  const SizedBox(height: 30),
-                  _buildLabel('Privacy and security settings',
-                      fontWeight: FontWeight.w600, fontSize: 18),
-                  const SizedBox(height: 20),
-                  _buildLabel('Who can send you messages?'),
-                  const SizedBox(height: 10),
-                  _buildToggle('Only Matches', provider.onlyMatches,
-                      provider.setOnlyMatches),
-                  const SizedBox(height: 20),
-                  _buildLabel('Push notifications'),
-                  const SizedBox(height: 10),
-                  _buildToggle('New Interactions', provider.newInteractions,
-                      provider.setNewInteractions),
-                  const SizedBox(height: 10),
-                  _buildToggle('Likes', provider.likes, provider.setLikes),
-                  const SizedBox(height: 10),
-                  _buildToggle(
-                      'Messages', provider.messages, provider.setMessages),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (provider.isStepThreeValid) {
-                          showProfileSuccessToast(context);
-                          Future.delayed(const Duration(milliseconds: 4000),
-                              () {
-                            int count = 0;
-                            Navigator.of(context)
-                                .popUntil((route) => count++ == 3);
-                          });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Please complete all fields')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1D97D4),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7)),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
+                    const SizedBox(height: 20),
+                    _buildLabel('University or school attended'),
+                    const SizedBox(height: 8),
+                    _buildTextField(
+                        'Your University', provider.universityController),
+                    const SizedBox(height: 20),
+                    _buildLabel('Academic Project'),
+                    const SizedBox(height: 8),
+                    _buildTextField('Your academic project details',
+                        provider.academicProjectController,
+                        maxLines: 5),
+                    const SizedBox(height: 20),
+                    _buildLabel('Professional Project'),
+                    const SizedBox(height: 8),
+                    _buildTextField('Your professional project details',
+                        provider.professionalProjectController,
+                        maxLines: 5),
+                    const SizedBox(height: 30),
+                    _buildLabel('Physical criteria',
+                        fontWeight: FontWeight.w600, fontSize: 18),
+                    const SizedBox(height: 20),
+                    _buildLabel('Size'),
+                    const SizedBox(height: 8),
+                    _buildChipSelector(context),
+                    if (provider.selectedSizes.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Please select at least one size',
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
                       ),
-                      child: const Text(
-                        'Update',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.white,
-                          height: 1,
+                    const SizedBox(height: 20),
+                    _buildLabel('Weight/silhouette (Kg)'),
+                    const SizedBox(height: 8),
+                    _buildTextField('e.g. 70', provider.weightController,
+                        isNumber: true),
+                    const SizedBox(height: 30),
+                    _buildLabel('Privacy and security settings',
+                        fontWeight: FontWeight.w600, fontSize: 18),
+                    const SizedBox(height: 20),
+                    _buildLabel('Who can send you messages?'),
+                    const SizedBox(height: 10),
+                    _buildToggle('Only Matches', provider.onlyMatches,
+                        provider.setOnlyMatches),
+                    const SizedBox(height: 20),
+                    _buildLabel('Push notifications'),
+                    const SizedBox(height: 10),
+                    _buildToggle('New Interactions', provider.newInteractions,
+                        provider.setNewInteractions),
+                    const SizedBox(height: 10),
+                    _buildToggle('Likes', provider.likes, provider.setLikes),
+                    const SizedBox(height: 10),
+                    _buildToggle(
+                        'Messages', provider.messages, provider.setMessages),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final provider = context.read<ProfileProvider>();
+
+                          if (_formKey.currentState!.validate() &&
+                              provider.selectedSizes.isNotEmpty) {
+                            // 1️⃣ Call updateProfile with all your fields:
+                            // await updateProfile(
+                            //   context,
+                            //   provider.profileImage ?? File(''),
+                            //   provider.firstNameController.text.trim(),
+                            //   provider.lastNameController.text.trim(),
+                            //   provider.usernameController.text.trim(),
+                            //   provider.emailController.text.trim(),
+                            //   provider.mobileController.text.trim(),
+                            //   provider.selectedGender ?? '',
+                            //   provider.selectedDate?.toIso8601String() ?? '',
+                            //   provider.selectedRelationshipStatus ?? '',
+                            //   provider.selectedRelationshipType ?? '',
+                            //   provider.occupationController.text.trim(),
+                            //   provider.courseController.text.trim(),
+                            //   provider.professionalProjectController.text.trim(),
+                            //   provider.selectedLevelOfStudy ?? '',
+                            //   provider.universityController.text.trim(),
+                            //   '',
+                            //   // latitude
+                            //   '',
+                            //   // longitude
+                            //   provider.selectedCity ?? '',
+                            //   provider.selectedRegion ?? '',
+                            //   provider.selectedReligion ?? '',
+                            //   provider.selectedCommunity ?? '',
+                            //   provider.selectedSubCommunity ?? '',
+                            //   provider.selectedZodiac ?? '',
+                            //   provider.selectedInterests.join(','),
+                            //   provider.heightController.text.trim(),
+                            //   provider.disability ?? '',
+                            //   provider.selectedComplexion ?? '',
+                            //   provider.selectedBodyType ?? '',
+                            //   provider.selectedDiet ?? '',
+                            //   provider.selectedDrink ?? '',
+                            //   provider.selectedSmoke ?? '',
+                            //   provider.genderSought ?? '',
+                            //   provider.ageRange.start.round().toString(),
+                            //   provider.distanceRange.start.round().toString(),
+                            //   provider.selectedPersonalities.join(','),
+                            //   provider.selectedSizes.join(','),
+                            //   provider.weightController.text.trim(),
+                            //   provider.onlyMatches.toString(),
+                            //   provider.newInteractions.toString(),
+                            //   provider.likes.toString(),
+                            //   provider.messages.toString(),
+                            //   provider.courseController.text.trim(),
+                            //   provider.occupationController.text.trim(),
+                            //   provider.selectedRelationshipType ?? '',
+                            //
+                            // );
+
+                            Future.delayed(const Duration(milliseconds: 4000),
+                                () {
+                              int count = 0;
+                              Navigator.of(context).popUntil((route) {
+                                return count++ == 3;
+                              });
+                            });
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please fill all the fields'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1D97D4),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                        ),
+                        child: const Text(
+                          'Update',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white,
+                            height: 1,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+//
+// Future<void> updateProfile(
+//   BuildContext context,
+//   File image,
+//   String firstname,
+//   String lastname,
+//   String userName,
+//   String emailAddress,
+//   String mobileNo,
+//   String gender,
+//   String dob,
+//   String relationshipStatus,
+//   String typeOfRelationship,
+//   String currentAcademic,
+//   String academicField,
+//   String professionalGoalsProjects,
+//   String levelOfStudies,
+//   String universitySchool,
+//   String latitude,
+//   String longitude,
+//   String city,
+//   String region,
+//   String religion,
+//   String community,
+//   String subCommunity,
+//   String astrological,
+//   String interests,
+//   String height,
+//   String anyDisability,
+//   String complexion,
+//   String bodytype,
+//   String diet,
+//   String drink,
+//   String smoker,
+//   String genderSought,
+//   String age,
+//   String maximumDistance,
+//   String personality,
+//   String size,
+//   String weight,
+//   String onlymatch,
+//   String newInteraction,
+//   String like,
+//   String message,
+//   String universityCourse,
+//   String userId,
+//   String intendedOccuption,
+//   String relationshipSought,
+//   String professionalGoals,
+// ) async {
+//   final profileProvider =
+//       Provider.of<ProfileProvider>(context, listen: false);
+//   await profileProvider.submitProfile(
+//     context,
+//     image,
+//     firstname,
+//     lastname,
+//     userName,
+//     emailAddress,
+//     mobileNo,
+//     gender,
+//     dob,
+//     relationshipStatus,
+//     typeOfRelationship,
+//     currentAcademic,
+//     academicField,
+//     professionalGoalsProjects,
+//     levelOfStudies,
+//     universitySchool,
+//     latitude,
+//     longitude,
+//     city,
+//     region,
+//     religion,
+//     community,
+//     subCommunity,
+//     astrological,
+//     interests,
+//     height,
+//     anyDisability,
+//     complexion,
+//     bodytype,
+//     diet,
+//     drink,
+//     smoker,
+//     genderSought,
+//     age,
+//     maximumDistance,
+//     personality,
+//     size,
+//     weight,
+//     onlymatch,
+//     newInteraction,
+//     like,
+//     message,
+//     universityCourse,
+//     userId,
+//     intendedOccuption,
+//     relationshipSought,
+//   );
+// }
 }

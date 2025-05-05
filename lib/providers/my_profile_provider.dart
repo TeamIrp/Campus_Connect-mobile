@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/update_profile_model.dart';
+import '../service/api_services.dart';
+import '../utils/show_toast.dart';
+import '../widgets/toast_modals.dart';
+
 class ProfileProvider with ChangeNotifier {
   // ─── Step 1 controllers & state ─────────
   final TextEditingController firstNameController = TextEditingController();
@@ -396,6 +401,139 @@ class ProfileProvider with ChangeNotifier {
     selectedZodiac = zodiac;
     if (zodiac != null) _savePref('zodiac', zodiac);
     notifyListeners();
+  }
+
+  bool _isLoading = false;
+  MyProfile? _updatedProfile;
+
+  Future<void> submitProfile(
+    BuildContext context,
+    File image,
+    String firstname,
+    String lastname,
+    String userName,
+    String emailAddress,
+    String mobileNo,
+    String password,
+    String gender,
+    String dob,
+    String relationshipStatus,
+    String typeOfRelationship,
+    String currentAcademic,
+    String academicField,
+    String professionalGoalsProjects,
+    String passwordConfirmation,
+    String levelOfStudies,
+    String universitySchool,
+    String latitude,
+    String longitude,
+    String city,
+    String region,
+    String religion,
+    String community,
+    String subCommunity,
+    String astrological,
+    String interests,
+    String height,
+    String anyDisability,
+    String complexion,
+    String bodytype,
+    String diet,
+    String drink,
+    String smoker,
+    String genderSought,
+    String age,
+    String maximumDistance,
+    String personality,
+    String size,
+    String weight,
+    String onlymatch,
+    String newInteraction,
+    String like,
+    String message,
+    String verification,
+    String aboutCustomer,
+    String description,
+    String universityCourse,
+    String userId,
+    String intendedOccuption,
+    String relationshipSought,
+    String professionalGoals,
+  ) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _updatedProfile = await ApiService.updateProfile(
+        context,
+        image,
+        firstname,
+        lastname,
+        userName,
+        emailAddress,
+        mobileNo,
+        password,
+        gender,
+        dob,
+        relationshipStatus,
+        typeOfRelationship,
+        currentAcademic,
+        academicField,
+        professionalGoalsProjects,
+        passwordConfirmation,
+        levelOfStudies,
+        universitySchool,
+        latitude,
+        longitude,
+        city,
+        region,
+        religion,
+        community,
+        subCommunity,
+        astrological,
+        interests,
+        height,
+        anyDisability,
+        complexion,
+        bodytype,
+        diet,
+        drink,
+        smoker,
+        genderSought,
+        age,
+        maximumDistance,
+        personality,
+        size,
+        weight,
+        onlymatch,
+        newInteraction,
+        like,
+        message,
+        verification,
+        aboutCustomer,
+        description,
+        universityCourse,
+        userId,
+        intendedOccuption,
+        relationshipSought,
+        professionalGoals,
+      );
+
+      if (_updatedProfile?.statusCode == 200 &&
+          _updatedProfile?.status == true) {
+        showProfileSuccessToast(context);
+      } else if (_updatedProfile?.statusCode == 400 &&
+          _updatedProfile?.status == false) {
+        ShowToast.showToastError(_updatedProfile!.message.toString());
+      } else {
+        ShowToast.showToastError(_updatedProfile!.errorMsg.toString());
+      }
+    } catch (e) {
+      ShowToast.showToastError(e.toString());
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   bool get isStepOneValid {
