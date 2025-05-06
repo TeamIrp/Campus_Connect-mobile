@@ -349,6 +349,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../providers/my_profile_provider.dart';
 import '../../widgets/profile_appbar.dart';
 
@@ -362,6 +363,25 @@ class MyProfileStepThreeScreen extends StatefulWidget {
 
 class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  String? _userId;
+  String? _token;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadPrefs();
+    });
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userId = prefs.getString('userId');
+      _token = prefs.getString('token');
+    });
+  }
 
   Widget _buildChipSelector(BuildContext context) {
     final provider = context.watch<ProfileProvider>();
@@ -489,55 +509,25 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel('Profession and Studies Details',
-                        fontWeight: FontWeight.w600, fontSize: 18),
+                    _buildLabel('Profession and Studies Details',fontWeight: FontWeight.w600, fontSize: 18),
                     const SizedBox(height: 20),
                     _buildLabel('Current or intended occupation'),
                     const SizedBox(height: 8),
-                    _buildTextField(
-                        'Software Engineer', provider.occupationController),
+                    _buildTextField('Software Engineer', provider.occupationController),
                     const SizedBox(height: 20),
                     _buildLabel('University Course'),
                     const SizedBox(height: 8),
                     _buildTextField('Data Science', provider.courseController),
                     const SizedBox(height: 20),
-                    _buildLabel('Level of studies'),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: provider.selectedStudyLevel,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Color(0xFF797979)),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
-                      ),
-                      items: [
-                        'Bachelor\'s degree 1',
-                        'Bachelor\'s degree 2',
-                        'Bachelor\'s degree 3',
-                      ]
-                          .map(
-                              (e) => DropdownMenuItem(value: e, child: Text(e)))
-                          .toList(),
-                      onChanged: (value) =>
-                          provider.setSelectedStudyLevel(value),
-                      validator: (value) =>
-                          value == null ? 'Please select a level' : null,
-                    ),
+                    // dropdown("Level of studies", ["Associates", "Undergraduate", "postgraduate"], provider.selectedLevelOfStudy,provider.setLevelOfStudy),
                     const SizedBox(height: 20),
                     _buildLabel('University or school attended'),
                     const SizedBox(height: 8),
-                    _buildTextField(
-                        'Your University', provider.universityController),
+                    _buildTextField('Your University', provider.universityController),
                     const SizedBox(height: 20),
                     _buildLabel('Academic Project'),
                     const SizedBox(height: 8),
-                    _buildTextField('Your academic project details',
-                        provider.academicProjectController,
-                        maxLines: 5),
+                    _buildTextField('Your academic project details', provider.academicProjectController, maxLines: 5),
                     const SizedBox(height: 20),
                     _buildLabel('Professional Project'),
                     const SizedBox(height: 8),
@@ -588,77 +578,78 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () async {
-                          final provider = context.read<ProfileProvider>();
-
-                          if (_formKey.currentState!.validate() &&
-                              provider.selectedSizes.isNotEmpty) {
-                            // 1️⃣ Call updateProfile with all your fields:
-                            // await updateProfile(
-                            //   context,
-                            //   provider.profileImage ?? File(''),
-                            //   provider.firstNameController.text.trim(),
-                            //   provider.lastNameController.text.trim(),
-                            //   provider.usernameController.text.trim(),
-                            //   provider.emailController.text.trim(),
-                            //   provider.mobileController.text.trim(),
-                            //   provider.selectedGender ?? '',
-                            //   provider.selectedDate?.toIso8601String() ?? '',
-                            //   provider.selectedRelationshipStatus ?? '',
-                            //   provider.selectedRelationshipType ?? '',
-                            //   provider.occupationController.text.trim(),
-                            //   provider.courseController.text.trim(),
-                            //   provider.professionalProjectController.text.trim(),
-                            //   provider.selectedLevelOfStudy ?? '',
-                            //   provider.universityController.text.trim(),
-                            //   '',
-                            //   // latitude
-                            //   '',
-                            //   // longitude
-                            //   provider.selectedCity ?? '',
-                            //   provider.selectedRegion ?? '',
-                            //   provider.selectedReligion ?? '',
-                            //   provider.selectedCommunity ?? '',
-                            //   provider.selectedSubCommunity ?? '',
-                            //   provider.selectedZodiac ?? '',
-                            //   provider.selectedInterests.join(','),
-                            //   provider.heightController.text.trim(),
-                            //   provider.disability ?? '',
-                            //   provider.selectedComplexion ?? '',
-                            //   provider.selectedBodyType ?? '',
-                            //   provider.selectedDiet ?? '',
-                            //   provider.selectedDrink ?? '',
-                            //   provider.selectedSmoke ?? '',
-                            //   provider.genderSought ?? '',
-                            //   provider.ageRange.start.round().toString(),
-                            //   provider.distanceRange.start.round().toString(),
-                            //   provider.selectedPersonalities.join(','),
-                            //   provider.selectedSizes.join(','),
-                            //   provider.weightController.text.trim(),
-                            //   provider.onlyMatches.toString(),
-                            //   provider.newInteractions.toString(),
-                            //   provider.likes.toString(),
-                            //   provider.messages.toString(),
-                            //   provider.courseController.text.trim(),
-                            //   provider.occupationController.text.trim(),
-                            //   provider.selectedRelationshipType ?? '',
-                            //
-                            // );
-
-                            Future.delayed(const Duration(milliseconds: 4000),
-                                () {
-                              int count = 0;
-                              Navigator.of(context).popUntil((route) {
-                                return count++ == 3;
-                              });
-                            });
-                          } else {
+                          if (!_formKey.currentState!.validate() ||
+                              provider.selectedSizes.isEmpty ||
+                              _userId == null ||
+                              _token == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please fill all the fields'),
+                                content: Text(
+                                    'Please fill all fields and ensure you are logged in'),
                                 backgroundColor: Colors.red,
                               ),
                             );
+                            return;
                           }
+
+                          await updateProfile(
+                            context,
+                            _userId!,
+                            provider.profileImage ?? File(''),
+                            provider.selectedImages.isNotEmpty? provider.selectedImages.first: File(''),
+                            provider.firstNameController.text.trim(),
+                            provider.lastNameController.text.trim(),
+                            provider.usernameController.text.trim(),
+                            provider.emailController.text.trim(),
+                            provider.mobileController.text.trim(),
+                            provider.selectedGender ?? '',
+                            provider.selectedDate?.toIso8601String() ?? '',
+                            provider.selectedRelationshipStatus ?? '',
+                            provider.selectedRelationshipType ?? '',
+                            provider.occupationController.text.trim(),
+                            provider.courseController.text.trim(),
+                            provider.academicProjectController.text.trim(),
+                            provider.selectedLevelOfStudy ?? '',
+                            provider.universityController.text.trim(),
+                            provider.latitude?.toString() ?? '',
+                            provider.longitude?.toString() ?? '',
+                            provider.selectedCity ?? '',
+                            provider.selectedRegion ?? '',
+                            provider.selectedReligion ?? '',
+                            provider.selectedCommunity ?? '',
+                            provider.selectedSubCommunity ?? '',
+                            provider.selectedZodiac ?? '',
+                            provider.selectedInterests.join(','),
+                            provider.heightController.text.trim(),
+                            provider.disability ?? '',
+                            provider.selectedComplexion ?? '',
+                            provider.selectedBodyType ?? '',
+                            provider.selectedDiet ?? '',
+                            provider.selectedDrink ?? '',
+                            provider.selectedSmoke ?? '',
+                            provider.genderSought ?? '',
+                            provider.ageRange.start.round().toString(),
+                            provider.distanceRange.start.round().toString(),
+                            provider.selectedPersonalities.join(','),
+                            provider.selectedSizes.join(','),
+                            provider.weightController.text.trim(),
+                            provider.onlyMatches.toString(),
+                            provider.newInteractions.toString(),
+                            provider.likes.toString(),
+                            provider.messages.toString(),
+                            provider.courseController.text.trim(),
+                            provider.selectedRelationshipType ?? '',
+                            provider.professionalProjectController.text.trim(),
+                            _token!,
+                          );
+
+                          // pop back after a short delay
+                          Future.delayed(const Duration(milliseconds: 400), () {
+                            int count = 0;
+                            Navigator.of(context).popUntil((route) {
+                              return count++ == 3;
+                            });
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1D97D4),
@@ -688,105 +679,132 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
       ),
     );
   }
-//
-// Future<void> updateProfile(
-//   BuildContext context,
-//   File image,
-//   String firstname,
-//   String lastname,
-//   String userName,
-//   String emailAddress,
-//   String mobileNo,
-//   String gender,
-//   String dob,
-//   String relationshipStatus,
-//   String typeOfRelationship,
-//   String currentAcademic,
-//   String academicField,
-//   String professionalGoalsProjects,
-//   String levelOfStudies,
-//   String universitySchool,
-//   String latitude,
-//   String longitude,
-//   String city,
-//   String region,
-//   String religion,
-//   String community,
-//   String subCommunity,
-//   String astrological,
-//   String interests,
-//   String height,
-//   String anyDisability,
-//   String complexion,
-//   String bodytype,
-//   String diet,
-//   String drink,
-//   String smoker,
-//   String genderSought,
-//   String age,
-//   String maximumDistance,
-//   String personality,
-//   String size,
-//   String weight,
-//   String onlymatch,
-//   String newInteraction,
-//   String like,
-//   String message,
-//   String universityCourse,
-//   String userId,
-//   String intendedOccuption,
-//   String relationshipSought,
-//   String professionalGoals,
-// ) async {
-//   final profileProvider =
-//       Provider.of<ProfileProvider>(context, listen: false);
-//   await profileProvider.submitProfile(
-//     context,
-//     image,
-//     firstname,
-//     lastname,
-//     userName,
-//     emailAddress,
-//     mobileNo,
-//     gender,
-//     dob,
-//     relationshipStatus,
-//     typeOfRelationship,
-//     currentAcademic,
-//     academicField,
-//     professionalGoalsProjects,
-//     levelOfStudies,
-//     universitySchool,
-//     latitude,
-//     longitude,
-//     city,
-//     region,
-//     religion,
-//     community,
-//     subCommunity,
-//     astrological,
-//     interests,
-//     height,
-//     anyDisability,
-//     complexion,
-//     bodytype,
-//     diet,
-//     drink,
-//     smoker,
-//     genderSought,
-//     age,
-//     maximumDistance,
-//     personality,
-//     size,
-//     weight,
-//     onlymatch,
-//     newInteraction,
-//     like,
-//     message,
-//     universityCourse,
-//     userId,
-//     intendedOccuption,
-//     relationshipSought,
-//   );
-// }
+
+  Widget dropdown(String label, List<String> opts, String? val,
+      ValueChanged<String?> onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 5),
+        DropdownButtonFormField<String>(
+          value: val,
+          validator: (value) =>
+          value == null || value.isEmpty ? 'Required' : null,
+          items: opts
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Future<void> updateProfile(
+      BuildContext context,
+      String userId,
+      File userImage,
+      File otherImages,
+      String firstname,
+      String lastname,
+      String userName,
+      String emailAddress,
+      String mobileNo,
+      String gender,
+      String dob,
+      String relationshipStatus,
+      String typeOfRelationship,
+      String currentAcademic,
+      String academicField,
+      String professionalGoalsProjects,
+      String levelOfStudies,
+      String universitySchool,
+      String latitude,
+      String longitude,
+      String city,
+      String region,
+      String religion,
+      String community,
+      String subCommunity,
+      String astrological,
+      String interests,
+      String height,
+      String anyDisability,
+      String complexion,
+      String bodytype,
+      String diet,
+      String drink,
+      String smoker,
+      String genderSought,
+      String age,
+      String maximumDistance,
+      String personality,
+      String size,
+      String weight,
+      String onlyMatch,
+      String newInteraction,
+      String like,
+      String message,
+      String universityCourse,
+      String intendedOccuption,
+      String professionalGoals,
+      String token) async {
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    await profileProvider.submitProfile(
+      context,
+      userId,
+      userImage,
+      otherImages,
+      firstname,
+      lastname,
+      userName,
+      emailAddress,
+      mobileNo,
+      gender,
+      dob,
+      relationshipStatus,
+      typeOfRelationship,
+      currentAcademic,
+      academicField,
+      professionalGoalsProjects,
+      levelOfStudies,
+      universitySchool,
+      latitude,
+      longitude,
+      city,
+      region,
+      religion,
+      community,
+      subCommunity,
+      astrological,
+      interests,
+      height,
+      anyDisability,
+      complexion,
+      bodytype,
+      diet,
+      drink,
+      smoker,
+      genderSought,
+      age,
+      maximumDistance,
+      personality,
+      size,
+      weight,
+      onlyMatch,
+      newInteraction,
+      like,
+      message,
+      universityCourse,
+      intendedOccuption,
+      professionalGoals,
+      token,
+    );
+  }
 }

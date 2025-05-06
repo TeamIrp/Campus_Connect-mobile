@@ -380,8 +380,7 @@ class _ProfileCardState extends State<ProfileCard> {
     await getHome(context, userId, token);
   }
 
-  Future<void> getHome(
-      BuildContext context, String userId, String token) async {
+  Future<void> getHome(BuildContext context, String userId, String token) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
     await homeProvider.getHome(context, userId, token);
   }

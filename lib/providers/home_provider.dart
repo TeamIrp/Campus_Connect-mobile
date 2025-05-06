@@ -192,8 +192,7 @@ class HomeProvider with ChangeNotifier {
   }
 
 // API Call: Fetch and assign data
-  Future<void> getHome(
-      BuildContext context, String userId, String token) async {
+  Future<void> getHome(BuildContext context, String userId, String token) async {
     _isLoading = true;
     notifyListeners();
     try {

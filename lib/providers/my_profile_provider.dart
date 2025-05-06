@@ -31,7 +31,60 @@ class ProfileProvider with ChangeNotifier {
   String? selectedCity;
   String? selectedRegion;
 
-  // ─── Step 2 fields ─────
+  String _latitude = '0.0';
+  String _longitude = '0.0';
+
+  String get latitude => _latitude;
+
+  String get longitude => _longitude;
+
+  void setLatitude(String value) {
+    _latitude = value;
+    notifyListeners();
+  }
+
+  void setLongitude(String value) {
+    _longitude = value;
+    notifyListeners();
+  }
+
+  final List<String> relationshipStatusOptions = [
+    "Single",
+    "Married",
+    "Divorced"
+  ];
+  final List<String> relationshipTypeOptions = [
+    "Adventure",
+    "Serious relationship",
+    "Friendship",
+    "Casual encounters"
+  ];
+  final List<String> personalityOptions = [
+    "Introvert",
+    "Extrovert",
+    "Adventurous",
+    "Calm"
+  ];
+  final List<String> sizes = ['Short', 'Average', 'Tall'];
+  final List<String> selectedSizes = [];
+  final List<String> levelOfStudyOptions = [
+    'Bachelor\'s degree 1',
+    'Bachelor\'s degree 2',
+    'Bachelor\'s degree 3'
+  ];
+  final List<String> communityOptions = [
+    "Community 1",
+    "Community 2",
+    "Community 3"
+  ];
+  final List<String> subCommunityOptions = [
+    "Sub-Community 1",
+    "Sub-Community 2",
+    "Sub-Community 3",
+    "Sub-Community 4"
+  ];
+
+  //  ─── Step 2 fields ─────
   final List<String> interestsOptions = [
     "Cricket",
     "Music",
@@ -40,11 +93,7 @@ class ProfileProvider with ChangeNotifier {
     "Photography",
     "Football"
   ];
-  final List<String> relationshipStatusOptions = [
-    "Single",
-    "Married",
-    "Divorced"
-  ];
+  final TextEditingController heightController = TextEditingController();
   final List<String> complexionOptions = ["Fair", "Wheatish", "Dark"];
   final List<String> bodyTypeOptions = ["Fit", "Average", "Muscular", "Heavy"];
   final List<String> dietOptions = [
@@ -58,21 +107,10 @@ class ProfileProvider with ChangeNotifier {
     "Occasionally"
   ];
   final List<String> smokeOptions = ["Smoker", "Non-Smoker", "Occasionally"];
-  final List<String> relationshipTypeOptions = [
-    "Adventure",
-    "Serious relationship",
-    "Friendship",
-    "Casual encounters"
-  ];
-  final List<String> personalityOptions = [
-    "Introvert",
-    "Extrovert",
-    "Adventurous",
-    "Calm"
-  ];
   final List<String> genderSoughtOptions = ["Male", "Female"];
-  final List<String> sizes = ['Short', 'Average', 'Tall'];
-  final List<String> selectedSizes = [];
+
+  RangeValues distanceRange = const RangeValues(5, 15);
+  RangeValues ageRange = const RangeValues(20, 30);
 
   List<String> selectedInterests = [];
   String? stepTwoRelationshipStatus;
@@ -84,12 +122,8 @@ class ProfileProvider with ChangeNotifier {
   String? genderSought;
   List<String> selectedRelationshipTypes = [];
   List<String> selectedPersonalities = [];
-  RangeValues distanceRange = const RangeValues(5, 15);
-  RangeValues ageRange = const RangeValues(20, 30);
   String? disability;
   String? selectedStudyLevel;
-
-  final TextEditingController heightController = TextEditingController();
 
   // ─── Step 3 fields ─────
   final TextEditingController occupationController = TextEditingController();
@@ -108,11 +142,6 @@ class ProfileProvider with ChangeNotifier {
   bool messages = false;
 
   final List<String> sizeOptions = ['Small', 'Medium', 'Large'];
-  final List<String> levelOfStudyOptions = [
-    'Bachelor\'s degree 1',
-    'Bachelor\'s degree 2',
-    'Bachelor\'s degree 3'
-  ];
 
   ProfileProvider() {
     _loadSavedData();
@@ -122,7 +151,41 @@ class ProfileProvider with ChangeNotifier {
     _attachStep3Listeners();
   }
 
-  // ─── Persistence ──────────────────────────────────────────────────────────────
+  // Future<void> _loadSavedData() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   firstNameController.text = prefs.getString('first_name') ?? '';
+  //   lastNameController.text = prefs.getString('last_name') ?? '';
+  //   usernameController.text = prefs.getString('username') ?? '';
+  //   emailController.text = prefs.getString('email') ?? '';
+  //   mobileController.text = prefs.getString('mobile') ?? '';
+  //   selectedGender = prefs.getString('gender');
+  //   selectedRelationshipStatus = prefs.getString('relationship_status');
+  //   selectedRelationshipType = prefs.getString('relationship_type');
+  //   selectedCity = prefs.getString('city');
+  //   selectedRegion = prefs.getString('region');
+  //   selectedCommunity = prefs.getString('Community');
+  //   selectedSubCommunity = prefs.getString('Sub-Community');
+  //   selectedZodiac = prefs.getString('zodiac');
+  //   final dob = prefs.getString('date_of_birth');
+  //   if (dob != null) selectedDate = DateTime.parse(dob);
+  //   final img = prefs.getString('profile_image');
+  //   if (img != null && File(img).existsSync()) profileImage = File(img);
+  //
+  //   occupationController.text = prefs.getString('occupation') ?? '';
+  //   courseController.text = prefs.getString('course') ?? '';
+  //   universityController.text = prefs.getString('university') ?? '';
+  //   academicProjectController.text = prefs.getString('academic_project') ?? '';
+  //   professionalProjectController.text = prefs.getString('professional_project') ?? '';
+  //   weightController.text = prefs.getString('weight') ?? '';
+  //   selectedLevelOfStudy = prefs.getString('level_of_study');
+  //   onlyMatches = prefs.getBool('only_matches') ?? true;
+  //   newInteractions = prefs.getBool('new_interactions') ?? true;
+  //   likes = prefs.getBool('likes') ?? true;
+  //   messages = prefs.getBool('messages') ?? true;
+  //
+  //   notifyListeners();
+  // }
+
   Future<void> _loadSavedData() async {
     final prefs = await SharedPreferences.getInstance();
     firstNameController.text = prefs.getString('first_name') ?? '';
@@ -135,9 +198,13 @@ class ProfileProvider with ChangeNotifier {
     selectedRelationshipType = prefs.getString('relationship_type');
     selectedCity = prefs.getString('city');
     selectedRegion = prefs.getString('region');
+    selectedCommunity = prefs.getString('Community');
+    selectedSubCommunity = prefs.getString('Sub-Community');
     selectedZodiac = prefs.getString('zodiac');
+
     final dob = prefs.getString('date_of_birth');
     if (dob != null) selectedDate = DateTime.parse(dob);
+
     final img = prefs.getString('profile_image');
     if (img != null && File(img).existsSync()) profileImage = File(img);
 
@@ -148,7 +215,28 @@ class ProfileProvider with ChangeNotifier {
     professionalProjectController.text =
         prefs.getString('professional_project') ?? '';
     weightController.text = prefs.getString('weight') ?? '';
+    heightController.text = prefs.getString('height') ?? '';
+
     selectedLevelOfStudy = prefs.getString('level_of_study');
+    selectedComplexion = prefs.getString('complexion');
+    selectedBodyType = prefs.getString('body_type');
+    selectedDiet = prefs.getString('diet');
+    selectedDrink = prefs.getString('drink');
+    selectedSmoke = prefs.getString('smoke');
+    genderSought = prefs.getString('gender_sought');
+
+    final ageStart = prefs.getDouble('age_start') ?? 20;
+    final ageEnd = prefs.getDouble('age_end') ?? 30;
+    ageRange = RangeValues(ageStart, ageEnd);
+
+    final distStart = prefs.getDouble('distance_start') ?? 5;
+    final distEnd = prefs.getDouble('distance_end') ?? 15;
+    distanceRange = RangeValues(distStart, distEnd);
+
+    final savedInterests = prefs.getString('interests');
+    if (savedInterests != null && savedInterests.isNotEmpty) {
+      selectedInterests = savedInterests.split(',');
+    }
 
     onlyMatches = prefs.getBool('only_matches') ?? true;
     newInteractions = prefs.getBool('new_interactions') ?? true;
@@ -230,7 +318,6 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  // ─── Step 3 setters ──────────────
   void setLevelOfStudy(String? val) {
     selectedLevelOfStudy = val;
     if (val != null) _savePref('level_of_study', val);
@@ -270,19 +357,6 @@ class ProfileProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Setter for selectedCommunity
-  void setCommunity(String? value) {
-    selectedCommunity = value;
-    notifyListeners();
-  }
-
-  // Setter for selectedSubCommunity
-  void setSubCommunity(String? value) {
-    selectedSubCommunity = value;
-    notifyListeners();
-  }
-
-  // ─── Step 2 setters ────────────────
   void toggleInterest(String i) {
     selectedInterests.contains(i)
         ? selectedInterests.remove(i)
@@ -297,36 +371,37 @@ class ProfileProvider with ChangeNotifier {
 
   void setComplexion(String? v) {
     selectedComplexion = v;
+    if (v != null) _savePref('complexion', v);
     notifyListeners();
   }
 
   void setBodyType(String? v) {
     selectedBodyType = v;
+    if (v != null) _savePref('body_type', v);
     notifyListeners();
   }
 
   void setDiet(String? v) {
     selectedDiet = v;
+    if (v != null) _savePref('diet', v);
     notifyListeners();
   }
 
   void setDrink(String? v) {
     selectedDrink = v;
+    if (v != null) _savePref('drink', v);
     notifyListeners();
   }
 
   void setSmoke(String? v) {
     selectedSmoke = v;
+    if (v != null) _savePref('smoke', v);
     notifyListeners();
   }
 
   void setGenderSought(String? v) {
     genderSought = v;
-    notifyListeners();
-  }
-
-  void setSelectedStudyLevel(String? value) {
-    selectedStudyLevel = value;
+    if (v != null) _savePref('gender_sought', v);
     notifyListeners();
   }
 
@@ -356,10 +431,9 @@ class ProfileProvider with ChangeNotifier {
 
   void setDisability(String? v) {
     disability = v;
+    if (v != null) _savePref('disability', v);
     notifyListeners();
   }
-
-  // ─── General setters ──────────
 
   void setGender(String? gender) {
     selectedGender = gender;
@@ -397,6 +471,18 @@ class ProfileProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setCommunity(String? value) {
+    selectedCommunity = value;
+    if (value != null) _savePref('Community', value);
+    notifyListeners();
+  }
+
+  void setSubCommunity(String? value) {
+    selectedSubCommunity = value;
+    if (value != null) _savePref('Sub-Community', value);
+    notifyListeners();
+  }
+
   void setZodiac(String? zodiac) {
     selectedZodiac = zodiac;
     if (zodiac != null) _savePref('zodiac', zodiac);
@@ -407,72 +493,67 @@ class ProfileProvider with ChangeNotifier {
   MyProfile? _updatedProfile;
 
   Future<void> submitProfile(
-    BuildContext context,
-    File image,
-    String firstname,
-    String lastname,
-    String userName,
-    String emailAddress,
-    String mobileNo,
-    String password,
-    String gender,
-    String dob,
-    String relationshipStatus,
-    String typeOfRelationship,
-    String currentAcademic,
-    String academicField,
-    String professionalGoalsProjects,
-    String passwordConfirmation,
-    String levelOfStudies,
-    String universitySchool,
-    String latitude,
-    String longitude,
-    String city,
-    String region,
-    String religion,
-    String community,
-    String subCommunity,
-    String astrological,
-    String interests,
-    String height,
-    String anyDisability,
-    String complexion,
-    String bodytype,
-    String diet,
-    String drink,
-    String smoker,
-    String genderSought,
-    String age,
-    String maximumDistance,
-    String personality,
-    String size,
-    String weight,
-    String onlymatch,
-    String newInteraction,
-    String like,
-    String message,
-    String verification,
-    String aboutCustomer,
-    String description,
-    String universityCourse,
-    String userId,
-    String intendedOccuption,
-    String relationshipSought,
-    String professionalGoals,
-  ) async {
+      BuildContext context,
+      String userId,
+      File userImage,
+      File otherImages,
+      String firstname,
+      String lastname,
+      String userName,
+      String emailAddress,
+      String mobileNo,
+      String gender,
+      String dob,
+      String relationshipStatus,
+      String typeOfRelationship,
+      String currentAcademic,
+      String academicField,
+      String professionalGoalsProjects,
+      String levelOfStudies,
+      String universitySchool,
+      String latitude,
+      String longitude,
+      String city,
+      String region,
+      String religion,
+      String community,
+      String subCommunity,
+      String astrological,
+      String interests,
+      String height,
+      String anyDisability,
+      String complexion,
+      String bodytype,
+      String diet,
+      String drink,
+      String smoker,
+      String genderSought,
+      String age,
+      String maximumDistance,
+      String personality,
+      String size,
+      String weight,
+      String onlyMatch,
+      String newInteraction,
+      String like,
+      String message,
+      String universityCourse,
+      String intendedOccuption,
+      String professionalGoals,
+      String token) async {
     _isLoading = true;
     notifyListeners();
-
     try {
       _updatedProfile = await ApiService.updateProfile(
         context,
-        image,
+        userId,
+        userImage,
+        otherImages,
         firstname,
         lastname,
         userName,
         emailAddress,
         mobileNo,
-        password,
         gender,
         dob,
         relationshipStatus,
@@ -480,7 +561,6 @@ class ProfileProvider with ChangeNotifier {
         currentAcademic,
         academicField,
         professionalGoalsProjects,
-        passwordConfirmation,
         levelOfStudies,
         universitySchool,
         latitude,
@@ -505,18 +585,14 @@ class ProfileProvider with ChangeNotifier {
         personality,
         size,
         weight,
-        onlymatch,
+        onlyMatch,
         newInteraction,
         like,
         message,
-        verification,
-        aboutCustomer,
-        description,
         universityCourse,
-        userId,
         intendedOccuption,
-        relationshipSought,
         professionalGoals,
+        token,
       );
 
       if (_updatedProfile?.statusCode == 200 &&
@@ -552,7 +628,9 @@ class ProfileProvider with ChangeNotifier {
         selectedRegion != null &&
         selectedCommunity != null &&
         selectedSubCommunity != null &&
-        selectedZodiac != null;
+        selectedZodiac != null &&
+        _latitude.trim().isNotEmpty &&
+        _longitude.trim().isNotEmpty;
   }
 
   bool get isStepTwoValid {

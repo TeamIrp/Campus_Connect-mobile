@@ -366,7 +366,6 @@ class _YourProfileBody extends StatefulWidget {
 
 class _YourProfileBodyState extends State<_YourProfileBody> {
   final _formKey = GlobalKey<FormState>();
-  final paris = const LatLng(48.8566, 2.3522);
 
   Widget field(String label, TextEditingController c) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,6 +423,10 @@ class _YourProfileBodyState extends State<_YourProfileBody> {
   Widget build(BuildContext context) {
     final p = Provider.of<ProfileProvider>(context);
     final pad = MediaQuery.of(context).size.width * 0.05;
+
+    final double lat = double.tryParse(p.latitude) ?? 48.8566;
+    final double lng = double.tryParse(p.longitude) ?? 2.3522;
+    final LatLng userLocation = LatLng(lat, lng);
 
     return Scaffold(
       appBar: const ProfileAppBar(title: 'My Profile'),
@@ -535,8 +538,7 @@ class _YourProfileBodyState extends State<_YourProfileBody> {
               field("Email Address", p.emailController),
               field("Mobile Number", p.mobileController),
 
-              dropdown("Gender", ["Male", "Female", "Other"], p.selectedGender,
-                  p.setGender),
+              dropdown("Gender", ["Male", "Female", "Other"], p.selectedGender,p.setGender),
 
               // Date Picker
               Column(
@@ -580,8 +582,7 @@ class _YourProfileBodyState extends State<_YourProfileBody> {
                 ],
               ),
 
-              dropdown("Relationship Status", ["Single", "Married", "Other"],
-                  p.selectedRelationshipStatus, p.setRelationshipStatus),
+              dropdown("Relationship Status", ["Single", "Married", "Other"],p.selectedRelationshipStatus, p.setRelationshipStatus),
 
               dropdown(
                   "Type of Relationship Sought",
@@ -605,20 +606,25 @@ class _YourProfileBodyState extends State<_YourProfileBody> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: FlutterMap(
-                    options: MapOptions(initialCenter: paris, initialZoom: 15),
+                    options: MapOptions(
+                        initialCenter: userLocation, initialZoom: 15),
                     children: [
                       TileLayer(
-                          urlTemplate:
-                              "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                          subdomains: ['a', 'b', 'c']),
-                      MarkerLayer(markers: [
-                        Marker(
-                            point: paris,
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: ['a', 'b', 'c'],
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: userLocation,
                             width: 40,
                             height: 40,
                             child: const Icon(Icons.location_pin,
-                                color: Colors.red, size: 40)),
-                      ]),
+                                color: Colors.red, size: 40),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

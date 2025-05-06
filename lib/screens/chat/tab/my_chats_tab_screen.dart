@@ -11,7 +11,6 @@ class MyChatsTabScreen extends StatelessWidget {
       body: Column(
         children: [
           const SearchBar(),
-
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -132,14 +131,14 @@ class ChatProfile extends StatelessWidget {
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, __, ___) => ChatScreen(name: name, imagePath: imagePath),
+        pageBuilder: (_, __, ___) =>
+            ChatScreen(name: name, imagePath: imagePath),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +168,8 @@ class ChatProfile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 16.sp, fontWeight: FontWeight.w600),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -194,7 +194,8 @@ class ChatProfile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           status,
-                          style: TextStyle(fontSize: 14.sp, color: Colors.black),
+                          style:
+                              TextStyle(fontSize: 14.sp, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -239,4 +240,3 @@ class AdvertisementBanner extends StatelessWidget {
     );
   }
 }
-
