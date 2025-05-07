@@ -15,7 +15,7 @@ class PageDetailsScreen extends StatefulWidget {
 }
 
 class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTickerProviderStateMixin {
-  final DraggableScrollableController _controller = DraggableScrollableController();
+  final DraggableScrollableController _controller =  DraggableScrollableController();
   bool showOverlayDrawer = false;
   late AnimationController _overlayController;
   late Animation<Offset> _drawerAnimation;
@@ -35,6 +35,12 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
     );
   }
 
+  @override
+  void dispose() {
+    _overlayController.dispose();
+    super.dispose();
+  }
+
   void _toggleOverlayDrawer() {
     setState(() {
       showOverlayDrawer = true;
@@ -48,12 +54,6 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
         showOverlayDrawer = false;
       });
     });
-  }
-
-  @override
-  void dispose() {
-    _overlayController.dispose();
-    super.dispose();
   }
 
   Widget _dot() => Container(
@@ -104,7 +104,8 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
               child: Image.asset(widget.imagePath, fit: BoxFit.cover),
             ),
           ),
-          // Top navigation buttons
+
+          // 👇 Top navigation buttons
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -149,7 +150,8 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
               ),
             ),
           ),
-          // Draggable details sheet
+
+          // 👇 Draggable details sheet
           DraggableScrollableSheet(
             controller: _controller,
             initialChildSize: 0.66,
@@ -390,9 +392,9 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           _infoRow('Community', 'Christian'),
                           const SizedBox(height: 6),
                           _infoRow('Sub-Community', 'Christian'),
-
                           const SizedBox(height: 24),
-                          // Personality Type
+
+                          // 👇 Personality Type
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -413,7 +415,6 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 12),
                           SvgPicture.asset(
                             'assets/images/friendship.svg',
@@ -421,7 +422,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           ),
 
                           const SizedBox(height: 24),
-                          // Profession and Studies
+                          // 👇 Profession and Studies
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -472,9 +473,9 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                             'XYZ University',
                             isBoldRight: true,
                           ),
-
                           const SizedBox(height: 24),
-                          // Physical Criteria
+
+                          // 👇 Physical Criteria
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -500,7 +501,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           const SizedBox(height: 6),
                           _infoRow('Weight', '50 kg', isBoldRight: true),
 
-                          // Personal Information
+                          // 👇 Personal Information
                           const SizedBox(height: 20),
                           Row(
                             children: [
@@ -527,7 +528,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           _infoRow('Complexion', 'Fair'),
                           _infoRow('Body Type', 'Fit'),
 
-                          // Lifestyle
+                          // 👇 Lifestyle
                           const SizedBox(height: 24),
                           Row(
                             children: [
@@ -553,7 +554,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                           _infoRow('Drink', 'Alcoholic'),
                           _infoRow('Smoker', 'Smoker'),
 
-                          // Badges
+                          // 👇 Badges
                           const SizedBox(height: 20),
                           Row(
                             children: [
@@ -643,14 +644,16 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
               );
             },
           ),
-          // Background behind sticky container
+
+          // 👇 Background behind sticky container
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(height: 100, color: Colors.white),
           ),
-          // Sticky container with action buttons
+
+          // 👇 Sticky container with action buttons
           Positioned(
             bottom: 15,
             left: 0,
@@ -797,7 +800,8 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
               ),
             ),
           ),
-          // Custom overlay drawer with modal triggers for Block and Report actions
+
+          // 👇 Custom overlay drawer with modal triggers for Block and Report actions
           if (showOverlayDrawer)
             Positioned.fill(
               child: GestureDetector(
@@ -910,6 +914,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
                 ),
               ),
             ),
+
         ],
       ),
     );

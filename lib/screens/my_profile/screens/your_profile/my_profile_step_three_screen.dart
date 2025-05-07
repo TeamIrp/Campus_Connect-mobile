@@ -377,10 +377,14 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
 
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
       _userId = prefs.getString('userId');
       _token = prefs.getString('token');
     });
+
+    print('Token : ${_token}');
+    print('UserId : ${_userId}');
   }
 
   Widget _buildChipSelector(BuildContext context) {
