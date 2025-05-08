@@ -1,4 +1,5 @@
 import 'package:campus_connect/providers/auth_provider.dart';
+import 'package:campus_connect/providers/forgot_password_provider.dart';
 import 'package:campus_connect/providers/home_provider.dart';
 import 'package:campus_connect/providers/my_profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class _MyAppState extends State<MyApp> {
             ChangeNotifierProvider(create: (_) => AuthProvider()),
             ChangeNotifierProvider(create: (_) => HomeProvider()),
             ChangeNotifierProvider(create: (_) => ProfileProvider()),
+            ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -67,6 +69,8 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+
 
 // -------------------- i-phone view code ---------------------------
 

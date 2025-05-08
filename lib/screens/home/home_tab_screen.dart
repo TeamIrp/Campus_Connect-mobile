@@ -94,7 +94,6 @@ class HomeTabScreen extends StatelessWidget {
           onMapViewTap: () => hp.setHomeTabIndex(2),
         );
     }
-
     return Scaffold(body: content);
   }
 }

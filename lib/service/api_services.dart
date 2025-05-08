@@ -4,6 +4,7 @@ import 'package:campus_connect/models/home_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../models/forgetPassword_model.dart';
 import '../models/login_model.dart';
 import '../models/registration_model.dart';
 import '../models/update_profile_model.dart';
@@ -119,8 +120,7 @@ class ApiService {
     }
   }
 
-  static Future<Login> getLogin(
-      BuildContext context, String email, String password) async {
+  static Future<Login> getLogin(BuildContext context, String email, String password) async {
     late Login login;
     Dio dio = Dio();
 
@@ -193,6 +193,80 @@ class ApiService {
       );
     } catch (e) {
       return Login(
+        errorMsg: 'An unexpected error occurred: $e',
+        isError: true,
+      );
+    }
+  }
+
+  static Future<ForgotPassword> getForgotPassword(BuildContext context, String email) async {
+    late ForgotPassword forgotPassword;
+    Dio dio = Dio();
+
+    try {
+      final response = await DioService().dio.post(
+        ConstantUrl.forgotPassword,
+        data: {
+          "email": email,
+        },
+        options: Options(
+          headers: { },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        forgotPassword = ForgotPassword.fromJson(response.data);
+        if (forgotPassword.statusCode == 201 && forgotPassword.status == false) {
+          return ForgotPassword(
+            errorMsg: forgotPassword.message,
+            isError: true,
+          );
+        }
+        return forgotPassword;
+      } else {
+        return ForgotPassword(
+          errorMsg: 'API failed with status code: ${response.statusCode}',
+          isError: true,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage;
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+          errorMessage = 'Connection timed out.';
+          break;
+        case DioExceptionType.sendTimeout:
+          errorMessage = 'Request sending timed out.';
+          break;
+        case DioExceptionType.receiveTimeout:
+          errorMessage = 'Response timed out.';
+          break;
+        case DioExceptionType.badCertificate:
+          errorMessage = 'Bad certificate from server.';
+          break;
+        case DioExceptionType.badResponse:
+          errorMessage = 'Received invalid response.';
+          await _retryRequestWithDelay(dio, e.requestOptions, retryAfter: 5);
+          break;
+        case DioExceptionType.cancel:
+          errorMessage = 'Request was cancelled.';
+          break;
+        case DioExceptionType.connectionError:
+          errorMessage = 'No internet connection.';
+          break;
+        case DioExceptionType.unknown:
+          errorMessage = 'Unknown error occurred.';
+          break;
+        default:
+          errorMessage = 'Something went wrong.';
+          break;
+      }
+      return ForgotPassword(
+        errorMsg: errorMessage,
+        isError: true,
+      );
+    } catch (e) {
+      return ForgotPassword(
         errorMsg: 'An unexpected error occurred: $e',
         isError: true,
       );

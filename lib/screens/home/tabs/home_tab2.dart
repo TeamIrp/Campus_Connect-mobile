@@ -92,6 +92,8 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/home_provider.dart';
 import '../../../widgets/advertisement_screen.dart';
 import '../widgets/profile_card.dart';
 
@@ -172,5 +174,11 @@ class HomeTab2 extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> getHomeData(
+      BuildContext context, String userId, String token) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    homeProvider.getHome(context, userId, token);
   }
 }

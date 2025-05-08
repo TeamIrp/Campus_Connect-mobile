@@ -308,6 +308,10 @@
 //   }
 // }
 
+
+
+import 'package:campus_connect/sharedPreference/sharedpreference_constant.dart';
+import 'package:campus_connect/sharedPreference/sharedpreference_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -362,8 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
       provider.password,
     );
 
-    if (authProvider.loginResponse != null &&
-        authProvider.loginResponse?.status == true) {
+    if (authProvider.loginResponse != null && authProvider.loginResponse?.status == true) {
       Navigator.pushReplacement(
         context,
         _noTransition(const HomeScreen()),
@@ -472,8 +475,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onIconTap: provider.toggleObscureText,
                           ),
                           const SizedBox(height: 24),
-                          _buildButton("Login",
-                              onTap: () => _validateAndLogin(context)),
+                          _buildButton("Login", onTap: () => _validateAndLogin(context)),
                           const SizedBox(height: 32),
                           const Center(
                             child: Text(
@@ -612,15 +614,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginProvider = Provider.of<AuthProvider>(context, listen: false);
     await loginProvider.getlogin(context, email, password);
 
-    if (loginProvider.loginResponse?.statusCode == 200 &&
-        loginProvider.loginResponse?.status == true) {
-      final token = loginProvider.loginResponse?.data?.token;
-      final userId = loginProvider.loginResponse?.data?.userDetails?.id;
-
-      // Save to SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token ?? '');
-      await prefs.setString('userId', userId?.toString() ?? '');
+    if (loginProvider.loginResponse?.statusCode == 200 && loginProvider.loginResponse?.status == true) {
+      // final token = loginProvider.loginResponse?.data?.token;
+      // final userId = loginProvider.loginResponse?.data?.userDetails?.id;
+      //
+      // final prefs = await SharedPreferences.getInstance();
+      // await prefs.setString('token', token ?? '');
+      // await prefs.setString('userId', userId?.toString() ?? '');
+      SharedPreferenceHelper.saveData(SharedPreferenceConstant.USER_ID, loginProvider.loginResponse?.data?.userDetails?.id.toString());
+      SharedPreferenceHelper.saveData(SharedPreferenceConstant.TOKEN, loginProvider.loginResponse?.data?.token.toString());
     }
   }
 }
