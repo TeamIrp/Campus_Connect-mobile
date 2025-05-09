@@ -178,8 +178,7 @@ class HomeProvider with ChangeNotifier {
       } else if (_homeData?.statusCode == 400 && _homeData?.status == false) {
         ShowToast.showToastError(_homeData!.message.toString());
       } else {
-        ShowToast.showToastError(
-            _homeData?.errorMsg.toString() ?? 'Error');
+        ShowToast.showToastError( _homeData?.errorMsg.toString() ?? 'Error');
       }
     } catch (e) {
       ShowToast.showToastError(e.toString());

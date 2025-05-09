@@ -10,4 +10,5 @@ class ConstantUrl {
   static const String forgotPassword = "user/forgotpassword";
   static const String home = "usergethome";
   static const String updateProfile = "editprofile";
+  static const String publications = "publications";
 }

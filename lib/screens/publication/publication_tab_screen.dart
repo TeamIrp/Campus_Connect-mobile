@@ -7,7 +7,6 @@ import 'publication_details.dart';
 
 class PublicationTabScreen extends StatefulWidget {
   const PublicationTabScreen({super.key});
-
   @override
   _PublicationTabScreenState createState() => _PublicationTabScreenState();
 }
@@ -17,16 +16,8 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
   Map<String, int> likeCounts = {"image1": 12, "image2": 20, "image3": 15};
   Map<String, int> commentCounts = {"image1": 8, "image2": 10, "image3": 6};
   Map<String, int> shareCounts = {"image1": 5, "image2": 7, "image3": 3};
-  Map<String, String> publishDates = {
-    "image1": "24-12-2024",
-    "image2": "15-01-2025",
-    "image3": "05-02-2025",
-  };
-  Map<String, String> buttonTypes = {
-    "image1": "Event",
-    "image2": "News",
-    "image3": "Event",
-  };
+  Map<String, String> publishDates = {"image1": "24-12-2024","image2": "15-01-2025", "image3": "05-02-2025",};
+  Map<String, String> buttonTypes = {"image1": "Event", "image2": "News", "image3": "Event", };
 
   void _toggleLike(String key) {
     setState(() {
@@ -80,13 +71,6 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  void _navigateToDetails() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const PublicationDetailsScreen()),
     );
   }
 
@@ -179,6 +163,16 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                     size: 12,
                   ),
                   const SizedBox(width: 6),
+                  const Text(
+                    "20",
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xFF1D97D4),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
                   Container(
                     width: 6,
                     height: 6,
@@ -189,7 +183,7 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                   ),
                   const SizedBox(width: 6),
                   const Text(
-                    "View",
+                    "View ",
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w500,
@@ -288,6 +282,13 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _navigateToDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PublicationDetailsScreen()),
     );
   }
 }
