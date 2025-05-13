@@ -243,12 +243,10 @@ class _HomeTab1State extends State<HomeTab1> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      token =
-          await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
-      userId = await SharedPreferenceHelper.getData(
-          SharedPreferenceConstant.USER_ID);
+      token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+      userId = await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
       print("token : $token");
-      print("token : $userId");
+      print("User_Id : $userId");
       getHomeData(context, userId!, token!);
     });
   }
@@ -271,8 +269,7 @@ class _HomeTab1State extends State<HomeTab1> {
         centerTitle: true,
         flexibleSpace: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -447,8 +444,7 @@ class _HomeTab1State extends State<HomeTab1> {
     );
   }
 
-  Future<void> getHomeData(
-      BuildContext context, String userId, String token) async {
+  Future<void> getHomeData(BuildContext context, String userId, String token) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
     homeProvider.getHome(context, userId, token);
   }
