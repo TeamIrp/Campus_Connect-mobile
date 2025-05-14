@@ -237,13 +237,18 @@
 //   }
 // }
 
+
+
+// -----------------------------------------------------------------------------------------------
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../sharedPreference/sharedpreference_constant.dart';
+import '../../../sharedPreference/sharedpreference_helper.dart';
 
 class BasicDetailsTab extends StatefulWidget {
   const BasicDetailsTab({super.key});
@@ -280,9 +285,7 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location services are disabled.')),
-      );
+      _showSnackBar('Location services are disabled.');
       return;
     }
 
@@ -290,18 +293,13 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location permission denied.')),
-        );
+        _showSnackBar('Location permission denied.');
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Location permission permanently denied.')),
-      );
+      _showSnackBar('Location permission permanently denied.');
       return;
     }
 
@@ -309,16 +307,22 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
         desiredAccuracy: LocationAccuracy.high);
 
     final provider = Provider.of<BasicDetailsProvider>(context, listen: false);
-    provider.setLocation(
-        position.latitude.toString(), position.longitude.toString());
+    final latitude = position.latitude.toString();
+    final longitude = position.longitude.toString();
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('latitude', position.latitude.toString());
-    await prefs.setString('longitude', position.longitude.toString());
+    provider.setLocation(latitude, longitude);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Location saved successfully.')),
-    );
+    await SharedPreferenceHelper.saveData(
+        SharedPreferenceConstant.LATITUDE, latitude);
+    await SharedPreferenceHelper.saveData(
+        SharedPreferenceConstant.LONGITUDE, longitude);
+
+    _showSnackBar('Location saved successfully.');
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -333,7 +337,6 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
           _buildProfilePicture(provider),
           const SizedBox(height: 40),
           _buildInputRow(
-            context,
             "First Name",
             provider.firstName,
             provider.setFirstName,
@@ -345,25 +348,19 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
           _buildInputField("Email Address", provider.email, provider.setEmail),
           _buildInputField(
               "Mobile Number", provider.mobile, provider.setMobile),
-          _buildDropdownField(
-            "Gender",
-            ["Male", "Female", "Other"],
-            provider.gender,
-            provider.setGender,
-          ),
+          _buildDropdownField("Gender", ["Male", "Female", "Other"],
+              provider.gender, provider.setGender),
           _buildDatePicker(provider),
           _buildDropdownField(
-            "Relationship Status",
-            ["Single", "Married", "Other"],
-            provider.relationshipStatus,
-            provider.setRelationshipStatus,
-          ),
+              "Relationship Status",
+              ["Single", "Married", "Other"],
+              provider.relationshipStatus,
+              provider.setRelationshipStatus),
           _buildDropdownField(
-            "Type of Relationship Sought",
-            ["Friendship", "Networking", "Dating", "Other"],
-            provider.relationshipType,
-            provider.setRelationshipType,
-          ),
+              "Type of Relationship Sought",
+              ["Friendship", "Networking", "Dating", "Other"],
+              provider.relationshipType,
+              provider.setRelationshipType),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
@@ -373,7 +370,7 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
               icon: const Icon(Icons.location_on),
               label: const Text('Access Location'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                // backgroundColor: Colors.blue,
                 textStyle: const TextStyle(fontSize: 16),
               ),
             ),
@@ -413,7 +410,6 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
   }
 
   Widget _buildInputRow(
-    BuildContext context,
     String label1,
     String value1,
     Function(String) onChanged1,
@@ -436,18 +432,17 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     Function(String) onChanged,
   ) {
     final controller = TextEditingController(text: value);
-    controller.selection = TextSelection.collapsed(
-      offset: controller.text.length,
-    );
+    controller.selection =
+        TextSelection.collapsed(offset: controller.text.length);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
-        ),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black)),
         const SizedBox(height: 5),
         TextField(
           controller: controller,
@@ -471,11 +466,11 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
-        ),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black)),
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
           value: selectedValue,

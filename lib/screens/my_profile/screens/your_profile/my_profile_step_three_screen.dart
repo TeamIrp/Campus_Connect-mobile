@@ -346,8 +346,8 @@
 // ------------------------------------------------------------------------------------------
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../providers/my_profile_provider.dart';
@@ -513,11 +513,13 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel('Profession and Studies Details',fontWeight: FontWeight.w600, fontSize: 18),
+                    _buildLabel('Profession and Studies Details',
+                        fontWeight: FontWeight.w600, fontSize: 18),
                     const SizedBox(height: 20),
                     _buildLabel('Current or intended occupation'),
                     const SizedBox(height: 8),
-                    _buildTextField('Software Engineer', provider.occupationController),
+                    _buildTextField(
+                        'Software Engineer', provider.occupationController),
                     const SizedBox(height: 20),
                     _buildLabel('University Course'),
                     const SizedBox(height: 8),
@@ -527,11 +529,14 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                     const SizedBox(height: 20),
                     _buildLabel('University or school attended'),
                     const SizedBox(height: 8),
-                    _buildTextField('Your University', provider.universityController),
+                    _buildTextField(
+                        'Your University', provider.universityController),
                     const SizedBox(height: 20),
                     _buildLabel('Academic Project'),
                     const SizedBox(height: 8),
-                    _buildTextField('Your academic project details', provider.academicProjectController, maxLines: 5),
+                    _buildTextField('Your academic project details',
+                        provider.academicProjectController,
+                        maxLines: 5),
                     const SizedBox(height: 20),
                     _buildLabel('Professional Project'),
                     const SizedBox(height: 8),
@@ -586,12 +591,12 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                               provider.selectedSizes.isEmpty ||
                               _userId == null ||
                               _token == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Please fill all fields and ensure you are logged in'),
-                                backgroundColor: Colors.red,
-                              ),
+                            Fluttertoast.showToast(
+                              msg: "Please fill all the fields",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
                             );
                             return;
                           }
@@ -600,7 +605,9 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                             context,
                             _userId!,
                             provider.profileImage ?? File(''),
-                            provider.selectedImages.isNotEmpty? provider.selectedImages.first: File(''),
+                            provider.selectedImages.isNotEmpty
+                                ? provider.selectedImages.first
+                                : File(''),
                             provider.firstNameController.text.trim(),
                             provider.lastNameController.text.trim(),
                             provider.usernameController.text.trim(),
@@ -648,7 +655,7 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                           );
 
                           // pop back after a short delay
-                          Future.delayed(const Duration(milliseconds: 400), () {
+                          Future.delayed(const Duration(milliseconds: 0), () {
                             int count = 0;
                             Navigator.of(context).popUntil((route) {
                               return count++ == 3;
@@ -695,7 +702,7 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
         DropdownButtonFormField<String>(
           value: val,
           validator: (value) =>
-          value == null || value.isEmpty ? 'Required' : null,
+              value == null || value.isEmpty ? 'Required' : null,
           items: opts
               .map((e) => DropdownMenuItem(value: e, child: Text(e)))
               .toList(),

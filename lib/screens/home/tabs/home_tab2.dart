@@ -87,10 +87,6 @@
 //   }
 // }
 
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/home_provider.dart';
@@ -100,8 +96,7 @@ import '../widgets/profile_card.dart';
 class HomeTab2 extends StatelessWidget {
   final VoidCallback onBackPressed;
 
-  const HomeTab2({Key? key, required this.onBackPressed})
-      : super(key: key);
+  const HomeTab2({Key? key, required this.onBackPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -132,14 +127,12 @@ class HomeTab2 extends StatelessWidget {
           GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (_) => const AdvertisementScreen()),
+              MaterialPageRoute(builder: (_) => const AdvertisementScreen()),
             ),
             child: Container(
               width: double.infinity,
               height: 80,
-              margin: const EdgeInsets.symmetric(
-                  vertical: 12, horizontal: 12),
+              margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF797979),
                 borderRadius: BorderRadius.circular(10),
@@ -176,8 +169,7 @@ class HomeTab2 extends StatelessWidget {
     );
   }
 
-  Future<void> getHomeData(
-      BuildContext context, String userId, String token) async {
+  Future<void> getHomeData(BuildContext context, String userId, String token) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
     homeProvider.getHome(context, userId, token);
   }
