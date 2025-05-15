@@ -1,4 +1,3 @@
-import 'package:campus_connect/models/home_model.dart';
 import 'package:campus_connect/routes/route_constant.dart';
 import 'package:campus_connect/screens/authentication/screens/login_screen.dart';
 import 'package:campus_connect/screens/home/home_screen.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/authentication/error_screen.dart';
+import '../screens/authentication/screens/forgot_password_screen.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class ApplicationRouter{
@@ -41,6 +41,15 @@ class ApplicationRouter{
           pageBuilder: (context, state) => CupertinoPage(
             key: state.pageKey,
             child: RegistrationScreen(),
+          ),
+        ),
+
+        GoRoute(
+          name: RouteConstant.FORGOT_PASSWORD_SCREEN,
+          path: "/forgot_password_screen",
+          pageBuilder: (context, state) => CupertinoPage(
+            key: state.pageKey,
+            child: ForgotPasswordScreen(),
           ),
         ),
 

@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     // Hide the status bar for this screen
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
     Timer(const Duration(seconds: 3), () async {
       bool isLoggedIn = await SharedPreferenceHelper.getLoginState();

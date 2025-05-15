@@ -237,12 +237,11 @@
 //   }
 // }
 
-
-
 // -----------------------------------------------------------------------------------------------
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -285,7 +284,7 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      _showSnackBar('Location services are disabled.');
+      _showToast("Location services are disabled.");
       return;
     }
 
@@ -293,13 +292,13 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        _showSnackBar('Location permission denied.');
+        _showToast("Location permission denied.");
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      _showSnackBar('Location permission permanently denied.');
+      _showToast("Location permission permanently denied.");
       return;
     }
 
@@ -317,14 +316,28 @@ class _BasicDetailsTabState extends State<BasicDetailsTab> {
     await SharedPreferenceHelper.saveData(
         SharedPreferenceConstant.LONGITUDE, longitude);
 
-    _showSnackBar('Location saved successfully.');
+    _showToast1("Location saved successfully.");
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
   }
 
+  void _showToast1(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<BasicDetailsProvider>(context);

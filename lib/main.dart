@@ -2,12 +2,11 @@ import 'package:campus_connect/providers/auth_provider.dart';
 import 'package:campus_connect/providers/forgot_password_provider.dart';
 import 'package:campus_connect/providers/home_provider.dart';
 import 'package:campus_connect/providers/my_profile_provider.dart';
+import 'package:campus_connect/providers/publications_provider.dart';
 import 'package:campus_connect/routes/route_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:campus_connect/screens/authentication/screens/login_screen.dart';
-import 'package:campus_connect/screens/splash_screen.dart';
 import 'package:campus_connect/theme/app_theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -59,16 +58,13 @@ class _MyAppState extends State<MyApp> {
             ChangeNotifierProvider(create: (_) => HomeProvider()),
             ChangeNotifierProvider(create: (_) => ProfileProvider()),
             ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
+            ChangeNotifierProvider(create: (_) => PublicationsProvider()),
           ],
           builder: (context, child) {
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               routerConfig: ApplicationRouter.router,
-              title: 'Localization Demo',
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                useMaterial3: true,
-              ),
+              theme: AppTheme.themeData
             );
           },
         );
@@ -80,6 +76,8 @@ class _MyAppState extends State<MyApp> {
 
 
 // -------------------- i-phone view code ---------------------------
+
+
 
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/material.dart';

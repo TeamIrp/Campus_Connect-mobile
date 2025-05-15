@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:campus_connect/models/home_model.dart';
+import 'package:campus_connect/models/publications_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/forgetPassword_model.dart';
 import '../models/login_model.dart';
-import '../models/publications_model.dart';
 import '../models/registration_model.dart';
 import '../models/update_profile_model.dart';
 import 'contant_url.dart';
@@ -121,8 +121,7 @@ class ApiService {
     }
   }
 
-  static Future<Login> getLogin(
-      BuildContext context, String email, String password) async {
+  static Future<Login> getLogin(BuildContext context, String email, String password) async {
     late Login login;
     Dio dio = Dio();
 
@@ -201,26 +200,24 @@ class ApiService {
     }
   }
 
-  static Future<ForgotPassword> getForgotPassword(
-      BuildContext context, String email) async {
+  static Future<ForgotPassword> getForgotPassword(BuildContext context, String email) async {
     late ForgotPassword forgotPassword;
     Dio dio = Dio();
 
     try {
       final response = await DioService().dio.post(
-            ConstantUrl.forgotPassword,
-            data: {
-              "email": email,
-            },
-            options: Options(
-              headers: {},
-            ),
-          );
+        ConstantUrl.forgotPassword,
+        data: {
+          "email": email,
+        },
+        options: Options(
+          headers: { },
+        ),
+      );
 
       if (response.statusCode == 200) {
         forgotPassword = ForgotPassword.fromJson(response.data);
-        if (forgotPassword.statusCode == 201 &&
-            forgotPassword.status == false) {
+        if (forgotPassword.statusCode == 201 && forgotPassword.status == false) {
           return ForgotPassword(
             errorMsg: forgotPassword.message,
             isError: true,
@@ -277,8 +274,7 @@ class ApiService {
     }
   }
 
-  static Future<Home> getHome(
-      BuildContext context, String userId, String token) async {
+  static Future<Home> getHome(BuildContext context, String userId, String token) async {
     late Home home;
     Dio dio = Dio();
 
@@ -505,33 +501,35 @@ class ApiService {
     }
   }
 
-  static Future<Publications> getPublications(BuildContext context, String token) async {
-    late Publications publications;
+  static Future<PublicationsList> getPublications(BuildContext context, String token) async {
+    late PublicationsList publications;
     Dio dio = Dio();
 
     try {
       final response = await DioService().dio.post(
-            ConstantUrl.home,
-            data: {},
-            options: Options(
-              headers: {
-                'Authorization': 'Bearer $token',
-                'Content-Type': 'application/json',
-              },
-            ),
-          );
+        ConstantUrl.publications,
+        data: {
+
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
 
       if (response.statusCode == 200) {
-        publications = Publications.fromJson(response.data);
+        publications = PublicationsList.fromJson(response.data);
         if (publications.statusCode == 201 && publications.status == false) {
-          return Publications(
+          return PublicationsList(
             errorMsg: publications.message,
             isError: true,
           );
         }
         return publications;
       } else {
-        return Publications(
+        return PublicationsList(
           errorMsg: 'API failed with status code: ${response.statusCode}',
           isError: true,
         );
@@ -568,12 +566,12 @@ class ApiService {
           errorMessage = 'Something went wrong.';
           break;
       }
-      return Publications(
+      return PublicationsList(
         errorMsg: errorMessage,
         isError: true,
       );
     } catch (e) {
-      return Publications(
+      return PublicationsList(
         errorMsg: 'An unexpected error occurred: $e',
         isError: true,
       );

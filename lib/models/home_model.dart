@@ -304,8 +304,7 @@ class ProfilePicture {
     this.updatedAt,
   });
 
-  factory ProfilePicture.fromRawJson(String str) =>
-      ProfilePicture.fromJson(json.decode(str));
+  factory ProfilePicture.fromRawJson(String str) => ProfilePicture.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -320,6 +319,7 @@ class ProfilePicture {
             ? null
             : DateTime.parse(json["updated_at"]),
       );
+
 
   Map<String, dynamic> toJson() => {
         "id": id,

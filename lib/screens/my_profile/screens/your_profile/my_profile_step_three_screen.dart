@@ -349,8 +349,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../providers/my_profile_provider.dart';
+import '../../../../sharedPreference/sharedpreference_constant.dart';
+import '../../../../sharedPreference/sharedpreference_helper.dart';
+import '../../../../widgets/toast_modals.dart';
 import '../../widgets/profile_appbar.dart';
 
 class MyProfileStepThreeScreen extends StatefulWidget {
@@ -376,15 +378,13 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
   }
 
   Future<void> _loadPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
+    setState(() async {
+      _token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+      _userId = await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
 
-    setState(() {
-      _userId = prefs.getString('userId');
-      _token = prefs.getString('token');
+      print("token : $_token");
+      print("userId : $_userId");
     });
-
-    print('Token : ${_token}');
-    print('UserId : ${_userId}');
   }
 
   Widget _buildChipSelector(BuildContext context) {
@@ -587,13 +587,17 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                       height: 52,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (!_formKey.currentState!.validate() ||
-                              provider.selectedSizes.isEmpty ||
-                              _userId == null ||
-                              _token == null) {
+                          final isFormValid = _formKey.currentState!.validate();
+                          final areSizesSelected =
+                              provider.selectedSizes.isNotEmpty;
+
+                          // final isUserIdAvailable = _userId != null;
+                          // final isTokenAvailable = _token != null;
+
+                          if (!isFormValid || !areSizesSelected) {
                             Fluttertoast.showToast(
                               msg: "Please fill all the fields",
-                              toastLength: Toast.LENGTH_SHORT,
+                              toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.BOTTOM,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
@@ -654,8 +658,10 @@ class _MyProfileStepThreeScreenState extends State<MyProfileStepThreeScreen> {
                             _token!,
                           );
 
-                          // pop back after a short delay
-                          Future.delayed(const Duration(milliseconds: 0), () {
+                          showProfileSuccessToast(context);
+
+                          Future.delayed(const Duration(milliseconds: 4000),
+                              () {
                             int count = 0;
                             Navigator.of(context).popUntil((route) {
                               return count++ == 3;

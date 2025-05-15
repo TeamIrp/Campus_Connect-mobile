@@ -3,5 +3,5 @@ class RouteConstant{
   static const String LOGIN_SCREEN = "login_screen";
   static const String REGISTRATION_SCREEN = "registration_screen";
   static const String HOME_SCREEN = "home_screen";
-
+  static const String FORGOT_PASSWORD_SCREEN = "forgot_password_screen";
 }

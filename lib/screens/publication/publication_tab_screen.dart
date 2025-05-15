@@ -1,5 +1,9 @@
+import 'package:campus_connect/providers/publications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import '../../sharedPreference/sharedpreference_constant.dart';
+import '../../sharedPreference/sharedpreference_helper.dart';
 import '../../widgets/comment_drawer.dart';
 import '../../widgets/share_drawer.dart';
 import '../../widgets/advertisement_screen.dart';
@@ -7,21 +11,83 @@ import 'publication_details.dart';
 
 class PublicationTabScreen extends StatefulWidget {
   const PublicationTabScreen({super.key});
+
   @override
-  _PublicationTabScreenState createState() => _PublicationTabScreenState();
+  State<PublicationTabScreen> createState() => _PublicationTabScreenState();
 }
 
 class _PublicationTabScreenState extends State<PublicationTabScreen> {
-  Map<String, bool> likedImages = {};
-  Map<String, int> likeCounts = {"image1": 12, "image2": 20, "image3": 15};
-  Map<String, int> commentCounts = {"image1": 8, "image2": 10, "image3": 6};
-  Map<String, int> shareCounts = {"image1": 5, "image2": 7, "image3": 3};
-  Map<String, String> publishDates = {"image1": "24-12-2024","image2": "15-01-2025", "image3": "05-02-2025",};
-  Map<String, String> buttonTypes = {"image1": "Event", "image2": "News", "image3": "Event", };
+  final List<Map<String, dynamic>> _publications = [
+    {
+      "id": 1,
+      "imagePath": "assets/images/publication_image1.png",
+      "type": "Event",
+      "publishDate": "24-12-2024",
+      "likes": 12,
+      "comments": 8,
+      "shares": 5,
+      "views": 102,
+      "isLiked": false,
+    },
+    {
+      "id": 2,
+      "imagePath": "assets/images/publication_image2.png",
+      "type": "News",
+      "publishDate": "15-01-2025",
+      "likes": 20,
+      "comments": 10,
+      "shares": 7,
+      "views": 215,
+      "isLiked": false,
+    },
+    {
+      "id": 3,
+      "imagePath": "assets/images/publication_image3.png",
+      "type": "Event",
+      "publishDate": "05-02-2025",
+      "likes": 15,
+      "comments": 6,
+      "shares": 3,
+      "views": 178,
+      "isLiked": false,
+    },
+  ];
 
-  void _toggleLike(String key) {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     _fetchPublications();
+  //   });
+  // }
+  //
+  // Future<void> _fetchPublications() async {
+  //   String? token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+  //   if (token != null) {
+  //     await getPublicationsData(context, token);
+  //   }
+  // }
+
+  String?  token;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      token =  await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+      print("token : $token");
+      getPublicationsData(context, token!);
+    });
+  }
+
+  void _toggleLike(Map<String, dynamic> pub) {
     setState(() {
-      likedImages[key] = !(likedImages[key] ?? false);
+      pub["isLiked"] = !(pub["isLiked"] ?? false);
+      if (pub["isLiked"]) {
+        pub["likes"] += 1;
+      } else {
+        pub["likes"] -= 1;
+      }
     });
   }
 
@@ -45,7 +111,14 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
   void _navigateToAdvertisement(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const AdvertisementScreen()),
+      MaterialPageRoute(builder: (_) => const AdvertisementScreen()),
+    );
+  }
+
+  void _navigateToDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PublicationDetailsScreen()),
     );
   }
 
@@ -57,7 +130,7 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
         height: 80,
         margin: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Color(0xFF797979),
+          color: const Color(0xFF797979),
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.center,
@@ -74,7 +147,7 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
     );
   }
 
-  Widget _buildImage(String imagePath, String key) {
+  Widget _buildImage(Map<String, dynamic> pub) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -85,13 +158,11 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
-              image: AssetImage(imagePath),
+              image: AssetImage(pub["imagePath"]),
               fit: BoxFit.cover,
             ),
           ),
         ),
-
-        // Bottom Left Elements (Title, Button, Calendar, Views)
         Positioned(
           bottom: 20,
           left: 20,
@@ -100,12 +171,11 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
             children: [
               GestureDetector(
                 onTap: _navigateToDetails,
-                // ✅ Now both the text and button are clickable
                 child: Row(
                   children: [
-                    Text(
+                    const Text(
                       "Event title 123",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w600,
                         fontSize: 18,
@@ -117,12 +187,12 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                       width: 62,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1D97D4),
+                        color: Color(0xFF1D97D4),
                         borderRadius: BorderRadius.circular(32),
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        buttonTypes[key]!,
+                        pub["type"],
                         style: const TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w500,
@@ -135,14 +205,12 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-
-              // Calendar Icon and Date
               Row(
                 children: [
                   const Icon(Icons.event, color: Colors.white, size: 20),
                   const SizedBox(width: 6),
                   Text(
-                    publishDates[key]!,
+                    pub["publishDate"],
                     style: const TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w500,
@@ -153,19 +221,14 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                 ],
               ),
               const SizedBox(height: 8),
-
-              // Views, Blue Dot, View Text
               Row(
                 children: [
-                  const Icon(
-                    Icons.remove_red_eye_outlined,
-                    color: Color(0xFF1D97D4),
-                    size: 12,
-                  ),
+                  const Icon(Icons.remove_red_eye_outlined,
+                      color: Color(0xFF1D97D4), size: 12),
                   const SizedBox(width: 6),
-                  const Text(
-                    "20",
-                    style: TextStyle(
+                  Text(
+                    '${pub["views"]}',
+                    style: const TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -183,7 +246,7 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                   ),
                   const SizedBox(width: 6),
                   const Text(
-                    "View ",
+                    "View",
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w500,
@@ -196,8 +259,6 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
             ],
           ),
         ),
-
-        // Right-side icons (Like, Comment, Share)
         Positioned(
           bottom: 50,
           right: 5,
@@ -208,14 +269,12 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                   Icons.thumb_up,
                   size: 28,
                   color:
-                      likedImages[key] ?? false
-                          ? const Color(0xFF1D97D4)
-                          : Colors.white,
+                      pub["isLiked"] ? const Color(0xFF1D97D4) : Colors.white,
                 ),
-                onPressed: () => _toggleLike(key),
+                onPressed: () => _toggleLike(pub),
               ),
               Text(
-                '${likeCounts[key]}',
+                '${pub["likes"]}',
                 style: const TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 18,
@@ -228,7 +287,7 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
                 onPressed: () => _openCommentDrawer(context),
               ),
               Text(
-                '${commentCounts[key]}',
+                '${pub["comments"]}',
                 style: const TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 18,
@@ -253,7 +312,7 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                '${shareCounts[key]}',
+                '${pub["shares"]}',
                 style: const TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 18,
@@ -275,20 +334,20 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           children: [
-            _buildImage('assets/images/publication_image1.png', 'image1'),
-            _buildAdvertisementBox(),
-            _buildImage('assets/images/publication_image2.png', 'image2'),
-            _buildImage('assets/images/publication_image3.png', 'image3'),
+            for (int i = 0; i < _publications.length; i++) ...[
+              _buildImage(_publications[i]),
+              if (i == 0) _buildAdvertisementBox(),
+            ],
           ],
         ),
       ),
     );
   }
 
-  void _navigateToDetails() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const PublicationDetailsScreen()),
-    );
+  Future<void> getPublicationsData(BuildContext context, String token) async {
+    final publicationsProvider = Provider.of<PublicationsProvider>(context, listen: false);
+    await publicationsProvider.getPublications(context, token);
   }
 }
+
+

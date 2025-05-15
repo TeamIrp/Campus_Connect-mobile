@@ -15,8 +15,8 @@ class PublicationDetailsScreen extends StatefulWidget {
 }
 
 class _PublicationDetailsScreenState extends State<PublicationDetailsScreen> {
-  final LatLng eventLocation = LatLng(37.7749, -122.4194); // San Francisco
 
+  final LatLng eventLocation = LatLng(37.7749, -122.4194);
   final String eventKey = "event1";
   final Map<String, String> buttonTypes = {"event1": "Join"};
   final Map<String, String> publishDates = {"event1": "April 5, 2025"};

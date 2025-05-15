@@ -317,19 +317,13 @@
 //     );
 //   }
 // }
-//
-//
-
-
-
-
-
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/forgot_password_provider.dart';
+import '../../../routes/route_constant.dart';
 import '../../../utils/show_toast.dart';
 import 'login_screen.dart';
 
@@ -365,10 +359,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            context.goNamed(RouteConstant.LOGIN_SCREEN);
+          },
+
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -442,7 +438,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                   await forgotProvider.requestForgotPassword(context, email);
 
-                  if (forgotProvider.forgotPassword?.statusCode == 200 && forgotProvider.forgotPassword?.status == true) {
+                  if (forgotProvider.forgotPassword?.statusCode == 200 &&
+                      forgotProvider.forgotPassword?.status == true) {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -491,7 +488,8 @@ class _CustomToastContent extends StatefulWidget {
   State<_CustomToastContent> createState() => _CustomToastContentState();
 }
 
-class _CustomToastContentState extends State<_CustomToastContent> with SingleTickerProviderStateMixin {
+class _CustomToastContentState extends State<_CustomToastContent>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -515,7 +513,8 @@ class _CustomToastContentState extends State<_CustomToastContent> with SingleTic
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = widget.isSuccess ? const Color(0xFF14AE5C) : const Color(0xFFD31F34);
+    final backgroundColor =
+        widget.isSuccess ? const Color(0xFF14AE5C) : const Color(0xFFD31F34);
     final iconPath = widget.isSuccess
         ? 'assets/images/outlined_green_tick.png'
         : 'assets/images/error_icon.png';
@@ -528,7 +527,8 @@ class _CustomToastContentState extends State<_CustomToastContent> with SingleTic
           ]
         : ['Please enter a valid email address.'];
 
-    final progressColor = widget.isSuccess ? const Color(0xFF54D38F) : const Color(0xFFEE8789);
+    final progressColor =
+        widget.isSuccess ? const Color(0xFF54D38F) : const Color(0xFFEE8789);
 
     return Container(
       decoration: BoxDecoration(
@@ -583,9 +583,7 @@ class _CustomToastContentState extends State<_CustomToastContent> with SingleTic
               ],
             ),
           ),
-
           const SizedBox(height: 5),
-
           if (widget.showProgressBar) ...[
             const SizedBox(height: 5),
             AnimatedBuilder(
@@ -606,7 +604,6 @@ class _CustomToastContentState extends State<_CustomToastContent> with SingleTic
               },
             ),
           ],
-
         ],
       ),
     );
