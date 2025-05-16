@@ -270,19 +270,6 @@
 //
 //
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import 'package:campus_connect/models/home_model.dart';
 // import 'package:campus_connect/sharedPreference/sharedpreference_constant.dart';
 // import 'package:campus_connect/sharedPreference/sharedpreference_helper.dart';
@@ -529,14 +516,11 @@
 // }
 
 
-
-
-
+import 'package:flutter/material.dart';
 import 'package:campus_connect/models/home_model.dart';
 import 'package:campus_connect/providers/home_provider.dart';
 import 'package:campus_connect/sharedPreference/sharedpreference_constant.dart';
 import 'package:campus_connect/sharedPreference/sharedpreference_helper.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -552,7 +536,8 @@ class ProfileCard extends StatefulWidget {
 
 class _ProfileCardState extends State<ProfileCard> {
   final PageController _controller = PageController(viewportFraction: 0.95);
-  static const String _baseImageUrl = "https://campusconnect-web.irpinnovative.com/";
+  static const String _baseImageUrl =
+      "https://campusconnect-web.irpinnovative.com/";
 
   @override
   void initState() {
@@ -561,10 +546,13 @@ class _ProfileCardState extends State<ProfileCard> {
   }
 
   Future<void> _fetchUserData() async {
-    final token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
-    final userId = await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
+    final token =
+        await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+    final userId =
+        await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
     if (context.mounted) {
-      await Provider.of<HomeProvider>(context, listen: false).getHome(context, userId!, token!);
+      await Provider.of<HomeProvider>(context, listen: false)
+          .getHome(context, userId!, token!);
     }
   }
 
@@ -608,13 +596,15 @@ class _ProfileCardState extends State<ProfileCard> {
               Expanded(
                 flex: 4,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
                   child: Stack(
                     children: [
                       SizedBox.expand(
                         child: imageUrl.isNotEmpty
                             ? Image.network(imageUrl, fit: BoxFit.cover)
-                            : Image.asset('assets/images/sample_image1.png', fit: BoxFit.cover),
+                            : Image.asset('assets/images/sample_image1.png',
+                                fit: BoxFit.cover),
                       ),
                       Positioned(
                         bottom: 10,
@@ -647,34 +637,42 @@ class _ProfileCardState extends State<ProfileCard> {
           children: [
             Expanded(
               child: Text(
-                '${data.firstName ?? ''}, ${data.age ?? ''}',
-                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                '${data.firstName ?? ''} ${data.lastName ?? ''}, ${data.age ?? ''}',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 6),
             if (data.verification == 1)
               SvgPicture.asset('assets/images/green_tick.svg', height: 20, width: 20),
+            const SizedBox(width: 6),
+            if (data.distance != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white70,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_on, size: 11),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${data.distance!.toStringAsFixed(1)} km away',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
-        const SizedBox(height: 4),
-        if (data.distance != null)
-        Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white70,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.location_on, size: 14),
-                const SizedBox(width: 4),
-                Text('${data.distance!.toStringAsFixed(1)} km away'),
-              ],
-            ),
-          ),
         const SizedBox(height: 6),
-        const Text('About', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        const Text('About',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         Text(
           data.aboutcustomer?.toString() ?? '',
           maxLines: 2,
@@ -698,7 +696,7 @@ class _ProfileCardState extends State<ProfileCard> {
           const SizedBox(width: 16),
           _circleButton(
             icon: Icons.favorite,
-            color: Colors.red,
+            color: Color(0xFF1D97D4),
             onPressed: () {},
           ),
           const SizedBox(width: 16),
@@ -765,8 +763,9 @@ class PremiumTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -785,17 +784,20 @@ class GoldTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: const Color(0xFFE8B903), borderRadius: BorderRadius.circular(20)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      decoration: BoxDecoration(
+          color: const Color(0xFFE8B903),
+          borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset('assets/images/crown_white.png', width: 16, height: 16),
           const SizedBox(width: 4),
-          const Text('Gold', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          const Text('Gold',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 }
-
