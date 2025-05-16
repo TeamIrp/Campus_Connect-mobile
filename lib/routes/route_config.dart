@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../screens/authentication/error_screen.dart';
 import '../screens/authentication/screens/forgot_password_screen.dart';
+import '../screens/home/profile_detail_screen.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class ApplicationRouter{
@@ -61,6 +62,15 @@ class ApplicationRouter{
             child: HomeScreen(),
           ),
         ),
+
+        // GoRoute(
+        //   name: RouteConstant.PROFILE_DETAILS_SCREEN,
+        //   path: "/profile_details_screen",
+        //   pageBuilder: (context, state) => CupertinoPage(
+        //     key: state.pageKey,
+        //     child: PageDetailsScreen(),
+        //   ),
+        // ),
 
       ],
       errorPageBuilder: (context, state){

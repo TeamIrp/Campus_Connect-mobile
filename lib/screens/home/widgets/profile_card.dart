@@ -515,7 +515,6 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:campus_connect/models/home_model.dart';
 import 'package:campus_connect/providers/home_provider.dart';
@@ -525,6 +524,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../profile_detail_screen.dart';
 import 'gift_drawer.dart';
 
 class ProfileCard extends StatefulWidget {
@@ -583,6 +583,14 @@ class _ProfileCardState extends State<ProfileCard> {
         : '';
 
     return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PageDetailsScreen(profile: data),
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Container(
@@ -616,9 +624,7 @@ class _ProfileCardState extends State<ProfileCard> {
                   ),
                 ),
               ),
-              Expanded(
-                child: _buildBottomButtons(imageUrl),
-              ),
+              Expanded(child: _buildBottomButtons(imageUrl, data)),
             ],
           ),
         ),
@@ -647,11 +653,13 @@ class _ProfileCardState extends State<ProfileCard> {
             ),
             const SizedBox(width: 6),
             if (data.verification == 1)
-              SvgPicture.asset('assets/images/green_tick.svg', height: 20, width: 20),
+              SvgPicture.asset('assets/images/green_tick.svg',
+                  height: 20, width: 20),
             const SizedBox(width: 6),
             if (data.distance != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.white70,
                   borderRadius: BorderRadius.circular(20),
@@ -683,7 +691,7 @@ class _ProfileCardState extends State<ProfileCard> {
     );
   }
 
-  Widget _buildBottomButtons(String imagePath) {
+  Widget _buildBottomButtons(String imagePath, HomeData data) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -691,7 +699,14 @@ class _ProfileCardState extends State<ProfileCard> {
           _circleButton(
             icon: Icons.close,
             color: Colors.black,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PageDetailsScreen(profile: data),
+                ),
+              );
+            },
           ),
           const SizedBox(width: 16),
           _circleButton(
