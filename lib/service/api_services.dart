@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:campus_connect/models/home_model.dart';
 import 'package:campus_connect/models/publications_model.dart';
+import 'package:campus_connect/models/subscription_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -572,6 +573,83 @@ class ApiService {
       );
     } catch (e) {
       return PublicationsList(
+        errorMsg: 'An unexpected error occurred: $e',
+        isError: true,
+      );
+    }
+  }
+
+  static Future<Subscription> getSubscription(BuildContext context, String token) async {
+    late Subscription subscription;
+    Dio dio = Dio();
+
+    try {
+      final response = await DioService().dio.post(
+        ConstantUrl.subscription,
+        data: {
+
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        subscription = Subscription.fromJson(response.data);
+        if (subscription.statusCode == 201 && subscription.status == false) {
+          return Subscription(
+            errorMsg: subscription.message,
+            isError: true,
+          );
+        }
+        return subscription;
+      } else {
+        return Subscription(
+          errorMsg: 'API failed with status code: ${response.statusCode}',
+          isError: true,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage;
+      switch (e.type) {
+        case DioExceptionType.connectionTimeout:
+          errorMessage = 'Connection timed out.';
+          break;
+        case DioExceptionType.sendTimeout:
+          errorMessage = 'Request sending timed out.';
+          break;
+        case DioExceptionType.receiveTimeout:
+          errorMessage = 'Response timed out.';
+          break;
+        case DioExceptionType.badCertificate:
+          errorMessage = 'Bad certificate from server.';
+          break;
+        case DioExceptionType.badResponse:
+          errorMessage = 'Received invalid response.';
+          await _retryRequestWithDelay(dio, e.requestOptions, retryAfter: 5);
+          break;
+        case DioExceptionType.cancel:
+          errorMessage = 'Request was cancelled.';
+          break;
+        case DioExceptionType.connectionError:
+          errorMessage = 'No internet connection.';
+          break;
+        case DioExceptionType.unknown:
+          errorMessage = 'Unknown error occurred.';
+          break;
+        default:
+          errorMessage = 'Something went wrong.';
+          break;
+      }
+      return Subscription(
+        errorMsg: errorMessage,
+        isError: true,
+      );
+    } catch (e) {
+      return Subscription(
         errorMsg: 'An unexpected error occurred: $e',
         isError: true,
       );

@@ -4,7 +4,7 @@ class Home {
   final bool? status;
   final int? statusCode;
   final String? message;
-  final List<Datum>? data;
+  final List<HomeData>? data;
   final String? errorMsg;
   final bool? isError;
 
@@ -27,7 +27,7 @@ class Home {
         message: json["message"],
         data: json["data"] == null
             ? []
-            : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+            : List<HomeData>.from(json["data"]!.map((x) => HomeData.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -40,7 +40,7 @@ class Home {
       };
 }
 
-class Datum {
+class HomeData {
   final int? id;
   final int? isAdmin;
   final String? userid;
@@ -98,7 +98,7 @@ class Datum {
   final DateTime? updatedAt;
   final double? distance;
 
-  Datum({
+  HomeData({
     this.id,
     this.isAdmin,
     this.userid,
@@ -157,11 +157,11 @@ class Datum {
     this.distance,
   });
 
-  factory Datum.fromRawJson(String str) => Datum.fromJson(json.decode(str));
+  factory HomeData.fromRawJson(String str) => HomeData.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory HomeData.fromJson(Map<String, dynamic> json) => HomeData(
         id: json["id"],
         isAdmin: json["is_admin"],
         userid: json["userid"],

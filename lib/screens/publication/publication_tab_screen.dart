@@ -53,21 +53,6 @@ class _PublicationTabScreenState extends State<PublicationTabScreen> {
     },
   ];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     _fetchPublications();
-  //   });
-  // }
-  //
-  // Future<void> _fetchPublications() async {
-  //   String? token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
-  //   if (token != null) {
-  //     await getPublicationsData(context, token);
-  //   }
-  // }
-
   String?  token;
 
   @override

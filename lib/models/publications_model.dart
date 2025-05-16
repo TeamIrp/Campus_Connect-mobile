@@ -125,9 +125,7 @@ final publicationCategoryValues = EnumValues(
 
 enum Publicationimage { UPLOADS_USERS_USER_681_B5_DBC1_A18_F_JPG }
 
-final publicationimageValues = EnumValues({
-  "uploads/users/user_681b5dbc1a18f.jpg":
-      Publicationimage.UPLOADS_USERS_USER_681_B5_DBC1_A18_F_JPG
+final publicationimageValues = EnumValues({"uploads/users/user_681b5dbc1a18f.jpg" : Publicationimage.UPLOADS_USERS_USER_681_B5_DBC1_A18_F_JPG
 });
 
 class EnumValues<T> {

@@ -1,4 +1,289 @@
 // import 'package:campus_connect/models/home_model.dart';
+// import 'package:campus_connect/providers/home_provider.dart';
+// import 'package:campus_connect/sharedPreference/sharedpreference_constant.dart';
+// import 'package:campus_connect/sharedPreference/sharedpreference_helper.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:provider/provider.dart';
+// import 'package:shimmer/shimmer.dart';
+//
+// import 'gift_drawer.dart';
+//
+// class ProfileCard extends StatefulWidget {
+//   const ProfileCard({super.key});
+//
+//   @override
+//   State<ProfileCard> createState() => _ProfileCardState();
+// }
+//
+// class _ProfileCardState extends State<ProfileCard> {
+//   final PageController _controller = PageController(viewportFraction: 0.95);
+//   static const String baseImageUrl = 'https://campusconnect-web.irpinnovative.com/';
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _fetchUserData();
+//   }
+//
+//   Future<void> _fetchUserData() async {
+//     final token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+//     final userId = await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
+//     if (context.mounted) {
+//       await Provider.of<HomeProvider>(context, listen: false).getHome(context, userId!, token!);
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer<HomeProvider>(
+//       builder: (context, provider, _) {
+//         final data = provider.homeData?.data;
+//
+//         if (data == null || data.isEmpty) {
+//           return _buildShimmer();
+//         }
+//
+//         return PageView.builder(
+//           controller: _controller,
+//           itemCount: data.length,
+//           itemBuilder: (context, index) {
+//             return _buildProfileCard(data[index]);
+//           },
+//         );
+//       },
+//     );
+//   }
+//
+//   Widget _buildProfileCard(HomeData data) {
+//     final rawImage = data.profilePicture?.isNotEmpty == true
+//         ? data.profilePicture!.first.picture ?? ''
+//         : '';
+//     final imageUrl = rawImage.isNotEmpty
+//         ? (rawImage.startsWith('http') ? rawImage : '$baseImageUrl$rawImage')
+//         : '';
+//
+//     return GestureDetector(
+//       child: Padding(
+//         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+//         child: Container(
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(20),
+//             boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 5)],
+//           ),
+//           child: Column(
+//             children: [
+//               Expanded(
+//                 flex: 4,
+//                 child: ClipRRect(
+//                   borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+//                   child: Stack(
+//                     children: [
+//                       SizedBox.expand(
+//                         child: imageUrl.isNotEmpty
+//                             ? Image.network(imageUrl, fit: BoxFit.cover)
+//                             : Image.asset('assets/images/sample_image1.png', fit: BoxFit.cover),
+//                       ),
+//                       Positioned(
+//                         bottom: 10,
+//                         left: 10,
+//                         right: 10,
+//                         child: _buildProfileInfo(data),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               Expanded(
+//                 child: _buildBottomButtons(imageUrl),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildProfileInfo(HomeData data) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         if (data.subscriptionType == 'premium') const PremiumTag(),
+//         if (data.subscriptionType == 'gold') const GoldTag(),
+//         const SizedBox(height: 6),
+//         Row(
+//           children: [
+//             Expanded(
+//               child: Text(
+//                 '${data.firstName ?? ''}, ${data.age ?? ''}',
+//                 style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//             ),
+//             if (data.verification == 1)
+//               SvgPicture.asset('assets/images/green_tick.svg', height: 20, width: 20),
+//           ],
+//         ),
+//         const SizedBox(height: 4),
+//         if (data.distance != null)
+//           Container(
+//             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+//             decoration: BoxDecoration(
+//               color: Colors.white70,
+//               borderRadius: BorderRadius.circular(20),
+//             ),
+//             child: Row(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 const Icon(Icons.location_on, size: 14),
+//                 const SizedBox(width: 4),
+//                 Text('${data.distance!.toStringAsFixed(1)} km away'),
+//               ],
+//             ),
+//           ),
+//         const SizedBox(height: 6),
+//         const Text('About', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+//         Text(
+//           data.aboutcustomer?.toString() ?? '',
+//           maxLines: 2,
+//           overflow: TextOverflow.ellipsis,
+//           style: const TextStyle(color: Colors.white),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildBottomButtons(String imagePath) {
+//     return Center(
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           _circleButton(
+//             icon: Icons.close,
+//             color: Colors.black,
+//             onPressed: () {},
+//           ),
+//           const SizedBox(width: 16),
+//           _circleButton(
+//             icon: Icons.favorite,
+//             color: Colors.red,
+//             onPressed: () {},
+//           ),
+//           const SizedBox(width: 16),
+//           _circleButton(
+//             icon: Icons.card_giftcard,
+//             color: Colors.orange,
+//             onPressed: () {
+//               showModalBottomSheet(
+//                 context: context,
+//                 isScrollControlled: true,
+//                 backgroundColor: Colors.transparent,
+//                 builder: (_) => const GiftDrawer(),
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _circleButton({
+//     required IconData icon,
+//     required Color color,
+//     required VoidCallback onPressed,
+//   }) {
+//     return GestureDetector(
+//       onTap: onPressed,
+//       child: Container(
+//         width: 56,
+//         height: 56,
+//         decoration: BoxDecoration(
+//           color: color,
+//           shape: BoxShape.circle,
+//           boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4)],
+//         ),
+//         child: Icon(icon, color: Colors.white, size: 24),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildShimmer() {
+//     return Shimmer.fromColors(
+//       baseColor: Colors.grey.shade300,
+//       highlightColor: Colors.grey.shade100,
+//       child: ListView.builder(
+//         padding: const EdgeInsets.symmetric(horizontal: 16),
+//         itemCount: 2,
+//         itemBuilder: (context, index) => Container(
+//           margin: const EdgeInsets.symmetric(vertical: 12),
+//           height: 350,
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(16),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class PremiumTag extends StatelessWidget {
+//   const PremiumTag({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           Image.asset('assets/images/crown_black.png', width: 16, height: 16),
+//           const SizedBox(width: 4),
+//           const Text('Premium', style: TextStyle(fontWeight: FontWeight.bold)),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class GoldTag extends StatelessWidget {
+//   const GoldTag({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//       decoration: BoxDecoration(color: const Color(0xFFE8B903), borderRadius: BorderRadius.circular(20)),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           Image.asset('assets/images/crown_white.png', width: 16, height: 16),
+//           const SizedBox(width: 4),
+//           const Text('Gold', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:campus_connect/models/home_model.dart';
 // import 'package:campus_connect/sharedPreference/sharedpreference_constant.dart';
 // import 'package:campus_connect/sharedPreference/sharedpreference_helper.dart';
 // import 'package:flutter/material.dart';
@@ -244,324 +529,273 @@
 // }
 
 
+
+
+
+import 'package:campus_connect/models/home_model.dart';
+import 'package:campus_connect/providers/home_provider.dart';
 import 'package:campus_connect/sharedPreference/sharedpreference_constant.dart';
 import 'package:campus_connect/sharedPreference/sharedpreference_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/home_provider.dart';
-import '../profile_detail_screen.dart';
+import 'package:shimmer/shimmer.dart';
+
 import 'gift_drawer.dart';
 
 class ProfileCard extends StatefulWidget {
-  const ProfileCard({Key? key}) : super(key: key);
+  const ProfileCard({super.key});
 
   @override
   State<ProfileCard> createState() => _ProfileCardState();
 }
 
 class _ProfileCardState extends State<ProfileCard> {
-  final PageController _pageController = PageController(viewportFraction: 0.95);
-  String? userId, token;
+  final PageController _controller = PageController(viewportFraction: 0.95);
+  static const String _baseImageUrl = "https://campusconnect-web.irpinnovative.com/";
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      token =  await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
-      userId = await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
-      print("token : $token");
-      print("userId : $userId");
-      getHomeData(context, userId!, token!);
-    });
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    final token = await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
+    final userId = await SharedPreferenceHelper.getData(SharedPreferenceConstant.USER_ID);
+    if (context.mounted) {
+      await Provider.of<HomeProvider>(context, listen: false).getHome(context, userId!, token!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeProvider>(builder: (context, homeProvider, _) {
-      return PageView.builder(
-        controller: _pageController,
-        itemCount: homeProvider.homeData?.data?.length ?? 0,
-        physics: const PageScrollPhysics(),
-        itemBuilder: (context, index) {
-          final homeData = homeProvider.homeData?.data?[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-            child: _buildCard(
-              homeData?.profilePicture?.first.picture ?? '',
-              {
-                'name': homeData?.username ?? '',
-                'age': homeData?.age ?? '',
-                'distance': '${homeData?.distance ?? 0.0} km',
-                'verification': homeData?.verification ?? 0,
-                'about': homeData?.aboutcustomer ?? '',
-                'tag': homeData?.subscriptionType ?? '',
-              },
-            ),
-          );
-        },
-      );
-    });
+    return Consumer<HomeProvider>(
+      builder: (context, provider, _) {
+        final data = provider.homeData?.data;
+
+        if (data == null || data.isEmpty) {
+          return _buildShimmer();
+        }
+
+        return PageView.builder(
+          controller: _controller,
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return _buildProfileCard(data[index]);
+          },
+        );
+      },
+    );
   }
 
-  Widget _buildCard(String imagePath, Map<String, dynamic> user) {
+  Widget _buildProfileCard(HomeData data) {
+    final imageUrl = data.profilePicture?.isNotEmpty == true
+        ? _baseImageUrl + (data.profilePicture!.first.picture ?? '')
+        : '';
+
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTapUp: (details) {
-        final RenderBox box = context.findRenderObject() as RenderBox;
-        final localPosition = box.globalToLocal(details.globalPosition);
-        final buttonAreaTop = MediaQuery.of(context).size.height * 0.65;
-        if (localPosition.dy < buttonAreaTop) {
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) =>
-                  PageDetailsScreen(imagePath: imagePath),
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
-            ),
-          );
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: const [
-            BoxShadow(color: Color(0x66000000), blurRadius: 4.5)
-          ],
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20)),
-                child: LayoutBuilder(
-                  builder: (c, constr) => Stack(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 5)],
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 4,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  child: Stack(
                     children: [
                       SizedBox.expand(
-                        child: Image.network(
-                          imagePath.isNotEmpty
-                              ? imagePath
-                              : 'assets/images/sample_image1.png',
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Image.asset(
-                            'assets/images/sample_image1.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        child: imageUrl.isNotEmpty
+                            ? Image.network(imageUrl, fit: BoxFit.cover)
+                            : Image.asset('assets/images/sample_image1.png', fit: BoxFit.cover),
                       ),
                       Positioned(
-                        left: constr.maxWidth * 0.03,
-                        right: constr.maxWidth * 0.03,
-                        bottom: constr.maxHeight * 0.03,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (user['tag'] == 'premium') const PremiumTag(),
-                            if (user['tag'] == 'gold') const GoldTag(),
-                            const SizedBox(height: 6),
-                            Stack(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        '${user['name']}, ${user['age']}',
-                                        style: const TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 24,
-                                          color: Colors.white,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    if (user['verification'] == 1)
-                                      SvgPicture.asset(
-                                        'assets/images/green_tick.svg',
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                  ],
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  bottom: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFFAE8FF),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.location_on,
-                                            size: 12, color: Colors.black),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${user['distance']} Away',
-                                          style: const TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'About',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              user['about'] ?? '',
-                              style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w300,
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                        bottom: 10,
+                        left: 10,
+                        right: 10,
+                        child: _buildProfileInfo(data),
+                      )
                     ],
                   ),
                 ),
               ),
-            ),
+              Expanded(
+                child: _buildBottomButtons(imageUrl),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileInfo(HomeData data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (data.subscriptionType == 'Premium') const PremiumTag(),
+        if (data.subscriptionType == 'Golden') const GoldTag(),
+        const SizedBox(height: 6),
+        Row(
+          children: [
             Expanded(
-              flex: 1,
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _circleButton(
-                      backgroundColor: Colors.black,
-                      icon: Icons.close,
-                      iconSize: 18,
-                      iconColor: Colors.white,
-                      onPressed: () => Navigator.of(context).push(
-                        PageRouteBuilder(
-                          pageBuilder: (_, __, ___) =>
-                              PageDetailsScreen(imagePath: imagePath),
-                          transitionDuration: Duration.zero,
-                          reverseTransitionDuration: Duration.zero,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    _circleButton(
-                      backgroundColor: const Color(0xFF1D97D4),
-                      icon: Icons.favorite,
-                      iconSize: 25,
-                      iconColor: Colors.white,
-                      onPressed: () {
-                        // Action for like
-                      },
-                    ),
-                    const SizedBox(width: 16),
-                    _circleButton(
-                      backgroundColor: const Color(0xFFFF9500),
-                      icon: Icons.card_giftcard,
-                      iconSize: 25,
-                      iconColor: Colors.white,
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => const GiftDrawer(),
-                      ),
-                    ),
-                  ],
-                ),
+              child: Text(
+                '${data.firstName ?? ''}, ${data.age ?? ''}',
+                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            if (data.verification == 1)
+              SvgPicture.asset('assets/images/green_tick.svg', height: 20, width: 20),
           ],
         ),
+        const SizedBox(height: 4),
+        if (data.distance != null)
+        Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white70,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.location_on, size: 14),
+                const SizedBox(width: 4),
+                Text('${data.distance!.toStringAsFixed(1)} km away'),
+              ],
+            ),
+          ),
+        const SizedBox(height: 6),
+        const Text('About', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        Text(
+          data.aboutcustomer?.toString() ?? '',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomButtons(String imagePath) {
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _circleButton(
+            icon: Icons.close,
+            color: Colors.black,
+            onPressed: () {},
+          ),
+          const SizedBox(width: 16),
+          _circleButton(
+            icon: Icons.favorite,
+            color: Colors.red,
+            onPressed: () {},
+          ),
+          const SizedBox(width: 16),
+          _circleButton(
+            icon: Icons.card_giftcard,
+            color: Colors.orange,
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => const GiftDrawer(),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
   Widget _circleButton({
-    required Color backgroundColor,
     required IconData icon,
-    required double iconSize,
-    required Color iconColor,
+    required Color color,
     required VoidCallback onPressed,
   }) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 60,
-        height: 60,
+        width: 56,
+        height: 56,
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: color,
           shape: BoxShape.circle,
-          boxShadow: const [BoxShadow(blurRadius: 6, color: Colors.black26)],
+          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4)],
         ),
-        child: Icon(icon, color: iconColor, size: iconSize),
+        child: Icon(icon, color: Colors.white, size: 24),
       ),
     );
   }
 
-  Future<void> getHomeData(BuildContext context, String userId, String token) async {
-    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
-    await homeProvider.getHome(context, userId, token);
+  Widget _buildShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 2,
+        itemBuilder: (context, index) => Container(
+          margin: const EdgeInsets.symmetric(vertical: 12),
+          height: 350,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+    );
   }
 }
 
 class PremiumTag extends StatelessWidget {
-  const PremiumTag({Key? key}) : super(key: key);
+  const PremiumTag({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: Row(children: [
-        Image.asset('assets/images/crown_black.png', width: 16, height: 16),
-        const SizedBox(width: 4),
-        const Text('Premium', style: TextStyle(fontWeight: FontWeight.bold)),
-      ]),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset('assets/images/crown_black.png', width: 16, height: 16),
+          const SizedBox(width: 4),
+          const Text('Premium', style: TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 }
 
 class GoldTag extends StatelessWidget {
-  const GoldTag({Key? key}) : super(key: key);
+  const GoldTag({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-          color: Color(0xFFE8B903), borderRadius: BorderRadius.circular(20)),
-      child: Row(children: [
-        Image.asset('assets/images/crown_white.png', width: 16, height: 16),
-        const SizedBox(width: 4),
-        const Text('Gold',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      ]),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: const Color(0xFFE8B903), borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset('assets/images/crown_white.png', width: 16, height: 16),
+          const SizedBox(width: 4),
+          const Text('Gold', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 }
+
