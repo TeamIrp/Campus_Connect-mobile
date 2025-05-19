@@ -16,9 +16,9 @@ class DioService {
     var dio = Dio(
       BaseOptions(
         baseUrl: ConstantUrl.baseUrl,
-        receiveTimeout: const Duration(seconds: 50),
-        connectTimeout: const Duration(seconds: 50),
-        sendTimeout: const Duration(seconds: 50),
+        receiveTimeout: const Duration(seconds: 500),
+        connectTimeout: const Duration(seconds: 500),
+        sendTimeout: const Duration(seconds: 500),
       ),
     );
 

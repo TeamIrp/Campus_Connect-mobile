@@ -536,8 +536,7 @@ class ProfileCard extends StatefulWidget {
 
 class _ProfileCardState extends State<ProfileCard> {
   final PageController _controller = PageController(viewportFraction: 0.95);
-  static const String _baseImageUrl =
-      "https://campusconnect-web.irpinnovative.com/";
+  static const String _baseImageUrl = "https://campusconnect-web.irpinnovative.com/";
 
   @override
   void initState() {

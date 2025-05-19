@@ -9,7 +9,7 @@ class PublicationsProvider with ChangeNotifier {
 
   bool _isLoading = false;
 
-  PublicationsList? get subscriptionsList => _publicationsList;
+  PublicationsList? get publicationList => _publicationsList;
 
   bool get isLoading => _isLoading;
 

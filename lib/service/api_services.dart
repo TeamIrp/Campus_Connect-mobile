@@ -503,15 +503,11 @@ class ApiService {
   }
 
   static Future<PublicationsList> getPublications(BuildContext context, String token) async {
-    late PublicationsList publications;
     Dio dio = Dio();
 
     try {
-      final response = await DioService().dio.post(
+      final response = await DioService().dio.get(
         ConstantUrl.publications,
-        data: {
-
-        },
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -521,7 +517,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        publications = PublicationsList.fromJson(response.data);
+        final publications = PublicationsList.fromJson(response.data);
         if (publications.statusCode == 201 && publications.status == false) {
           return PublicationsList(
             errorMsg: publications.message,

@@ -390,3 +390,7 @@ class _PublicationDetailsScreenState extends State<PublicationDetailsScreen> {
     );
   }
 }
+
+
+
+

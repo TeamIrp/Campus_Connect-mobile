@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../models/publications_model.dart';
 import '../../../widgets/comment_drawer.dart';
 import '../../../widgets/share_drawer.dart';
 import '../../publication/publication_details.dart';
@@ -63,12 +64,15 @@ class _FavoritePublicationTabState extends State<FavoritePublicationTab> {
     );
   }
 
-  void _navigateToDetails() {
+  void _navigateToDetails(PublicationsDatum publication) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const PublicationDetailsScreen()),
+      MaterialPageRoute(
+        builder: (context) => PublicationDetailsScreen(),
+      ),
     );
   }
+
 
   Widget _buildAdvertisementBox() {
     return GestureDetector(
@@ -118,7 +122,7 @@ class _FavoritePublicationTabState extends State<FavoritePublicationTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
-                onTap: _navigateToDetails,
+                // onTap: _navigateToDetails,
                 child: Row(
                   children: [
                     Text(
