@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:campus_connect/models/home_model.dart';
-import 'package:campus_connect/models/publications_model.dart';
 import 'package:campus_connect/models/subscription_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/forgetPassword_model.dart';
 import '../models/login_model.dart';
+import '../models/publications_model.dart';
 import '../models/registration_model.dart';
 import '../models/update_profile_model.dart';
 import 'contant_url.dart';
@@ -122,7 +122,8 @@ class ApiService {
     }
   }
 
-  static Future<Login> getLogin(BuildContext context, String email, String password) async {
+  static Future<Login> getLogin(
+      BuildContext context, String email, String password) async {
     late Login login;
     Dio dio = Dio();
 
@@ -201,24 +202,26 @@ class ApiService {
     }
   }
 
-  static Future<ForgotPassword> getForgotPassword(BuildContext context, String email) async {
+  static Future<ForgotPassword> getForgotPassword(
+      BuildContext context, String email) async {
     late ForgotPassword forgotPassword;
     Dio dio = Dio();
 
     try {
       final response = await DioService().dio.post(
-        ConstantUrl.forgotPassword,
-        data: {
-          "email": email,
-        },
-        options: Options(
-          headers: { },
-        ),
-      );
+            ConstantUrl.forgotPassword,
+            data: {
+              "email": email,
+            },
+            options: Options(
+              headers: {},
+            ),
+          );
 
       if (response.statusCode == 200) {
         forgotPassword = ForgotPassword.fromJson(response.data);
-        if (forgotPassword.statusCode == 201 && forgotPassword.status == false) {
+        if (forgotPassword.statusCode == 201 &&
+            forgotPassword.status == false) {
           return ForgotPassword(
             errorMsg: forgotPassword.message,
             isError: true,
@@ -275,7 +278,8 @@ class ApiService {
     }
   }
 
-  static Future<Home> getHome(BuildContext context, String userId, String token) async {
+  static Future<Home> getHome(
+      BuildContext context, String userId, String token) async {
     late Home home;
     Dio dio = Dio();
 
@@ -502,29 +506,35 @@ class ApiService {
     }
   }
 
-  static Future<PublicationsList> getPublications(BuildContext context, String token) async {
+  static Future<PublicationsList> getPublications(
+      BuildContext context, String token) async {
+    late PublicationsList publicationsList;
     Dio dio = Dio();
 
     try {
       final response = await DioService().dio.get(
-        ConstantUrl.publications,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-        ),
-      );
+            ConstantUrl.publications,
+            data: {
+
+            },
+            options: Options(
+              headers: {
+                'Authorization': 'Bearer $token',
+                'Content-Type': 'application/json',
+              },
+            ),
+          );
 
       if (response.statusCode == 200) {
-        final publications = PublicationsList.fromJson(response.data);
-        if (publications.statusCode == 201 && publications.status == false) {
+        publicationsList = PublicationsList.fromJson(response.data);
+        if (publicationsList.statusCode == 201 &&
+            publicationsList.status == false) {
           return PublicationsList(
-            errorMsg: publications.message,
+            errorMsg: publicationsList.message,
             isError: true,
           );
         }
-        return publications;
+        return publicationsList;
       } else {
         return PublicationsList(
           errorMsg: 'API failed with status code: ${response.statusCode}',
@@ -575,23 +585,22 @@ class ApiService {
     }
   }
 
-  static Future<Subscription> getSubscription(BuildContext context, String token) async {
+  static Future<Subscription> getSubscription(
+      BuildContext context, String token) async {
     late Subscription subscription;
     Dio dio = Dio();
 
     try {
       final response = await DioService().dio.post(
-        ConstantUrl.subscription,
-        data: {
-
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-        ),
-      );
+            ConstantUrl.subscription,
+            data: {},
+            options: Options(
+              headers: {
+                'Authorization': 'Bearer $token',
+                'Content-Type': 'application/json',
+              },
+            ),
+          );
 
       if (response.statusCode == 200) {
         subscription = Subscription.fromJson(response.data);

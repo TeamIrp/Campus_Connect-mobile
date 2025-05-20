@@ -1,342 +1,293 @@
-import 'package:campus_connect/providers/publications_provider.dart';
+import 'package:campus_connect/screens/publication/publication_details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+
+import '../../models/publications_model.dart';
+import '../../providers/publications_provider.dart';
+import '../../service/contant_url.dart';
 import '../../sharedPreference/sharedpreference_constant.dart';
 import '../../sharedPreference/sharedpreference_helper.dart';
+import '../../widgets/advertisement_screen.dart';
 import '../../widgets/comment_drawer.dart';
 import '../../widgets/share_drawer.dart';
-import '../../widgets/advertisement_screen.dart';
-import 'publication_details.dart';
 
 class PublicationTabScreen extends StatefulWidget {
-  const PublicationTabScreen({super.key});
+  const PublicationTabScreen({Key? key}) : super(key: key);
 
   @override
   State<PublicationTabScreen> createState() => _PublicationTabScreenState();
 }
 
 class _PublicationTabScreenState extends State<PublicationTabScreen> {
-  final List<Map<String, dynamic>> _publications = [
-    {
-      "id": 1,
-      "imagePath": "assets/images/publication_image1.png",
-      "type": "Event",
-      "publishDate": "24-12-2024",
-      "likes": 12,
-      "comments": 8,
-      "shares": 5,
-      "views": 102,
-      "isLiked": false,
-    },
-    {
-      "id": 2,
-      "imagePath": "assets/images/publication_image2.png",
-      "type": "News",
-      "publishDate": "15-01-2025",
-      "likes": 20,
-      "comments": 10,
-      "shares": 7,
-      "views": 215,
-      "isLiked": false,
-    },
-    {
-      "id": 3,
-      "imagePath": "assets/images/publication_image3.png",
-      "type": "Event",
-      "publishDate": "05-02-2025",
-      "likes": 15,
-      "comments": 6,
-      "shares": 3,
-      "views": 178,
-      "isLiked": false,
-    },
-  ];
+  bool isLiked = false;
+  int likeCount = 100, commentCount = 25, shareCount = 10;
 
-  String?  token;
+  void _toggleLike() {
+    setState(() {
+      isLiked = !isLiked;
+      likeCount += isLiked ? 1 : -1;
+    });
+  }
+
+  void _openBottomSheet(Widget sheet) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => sheet,
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      token =  await SharedPreferenceHelper.getData(SharedPreferenceConstant.TOKEN);
-      print("token : $token");
-      getPublicationsData(context, token!);
-    });
-  }
-
-  void _toggleLike(Map<String, dynamic> pub) {
-    setState(() {
-      pub["isLiked"] = !(pub["isLiked"] ?? false);
-      if (pub["isLiked"]) {
-        pub["likes"] += 1;
-      } else {
-        pub["likes"] -= 1;
+      final token = await SharedPreferenceHelper.getData(
+        SharedPreferenceConstant.TOKEN,
+      );
+      if (token != null) {
+        context.read<PublicationsProvider>().getPublications(context, token);
       }
     });
   }
 
-  void _openCommentDrawer(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => const CommentDrawer(),
-    );
-  }
-
-  void _openShareDrawer(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.black,
-      isScrollControlled: true,
-      builder: (_) => const ShareDrawer(),
-    );
-  }
-
-  void _navigateToAdvertisement(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AdvertisementScreen()),
-    );
-  }
-
-  void _navigateToDetails() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const PublicationDetailsScreen()),
-    );
-  }
-
-  Widget _buildAdvertisementBox() {
-    return GestureDetector(
-      onTap: () => _navigateToAdvertisement(context),
-      child: Container(
-        width: double.infinity,
-        height: 80,
-        margin: const EdgeInsets.symmetric(vertical: 12),
+  Widget _buildShimmer() {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 3,
+      itemBuilder: (_, __) => Container(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        height: 500,
         decoration: BoxDecoration(
-          color: const Color(0xFF797979),
+          color: Colors.grey[300],
           borderRadius: BorderRadius.circular(10),
-        ),
-        alignment: Alignment.center,
-        child: const Text(
-          "Advertisements",
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
-            color: Colors.white,
-          ),
         ),
       ),
     );
   }
 
-  Widget _buildImage(Map<String, dynamic> pub) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: MediaQuery.of(context).size.width - 32,
-          height: 500,
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-              image: AssetImage(pub["imagePath"]),
-              fit: BoxFit.cover,
-            ),
-          ),
+  Widget _buildPublicationItem(PublicationDatum pub) {
+    final imageUrl =
+        (pub.publicationimage != null && pub.publicationimage!.isNotEmpty)
+            ? '${ConstantUrl.baseUrl}${pub.publicationimage!}'
+            : null;
+
+    final dateText = pub.publicationDate != null
+        ? DateFormat('yyyy-MM-dd').format(pub.publicationDate!)
+        : '';
+
+    final categoryText = pub.publicationCategory ?? '';
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PublicationDetailsScreen(publication: pub),
+          )),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        height: 500,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.grey[200],
         ),
-        Positioned(
-          bottom: 20,
-          left: 20,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              GestureDetector(
-                onTap: _navigateToDetails,
-                child: Row(
-                  children: [
-                    const Text(
-                      "Event title 123",
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        color: Colors.white,
+              imageUrl != null
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        'assets/images/publication_image1.png',
+                        fit: BoxFit.cover,
                       ),
+                    )
+                  : Image.asset(
+                      'assets/images/publication_image1.png',
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      width: 62,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF1D97D4),
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        pub["type"],
-                        style: const TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          color: Colors.white,
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Text(
+                          pub.publicationTitle ?? '',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        if (categoryText.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1D97D4),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              categoryText.toUpperCase(),
+                              style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today,
+                            size: 14, color: Colors.white),
+                        const SizedBox(width: 6),
+                        Text(
+                          dateText,
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.event, color: Colors.white, size: 20),
-                  const SizedBox(width: 6),
-                  Text(
-                    pub["publishDate"],
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: Colors.white,
+              Positioned(
+                bottom: 50,
+                right: 5,
+                child: Column(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                          isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
+                          size: 28,
+                          color:
+                              isLiked ? const Color(0xFF1D97D4) : Colors.white),
+                      onPressed: _toggleLike,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.remove_red_eye_outlined,
-                      color: Color(0xFF1D97D4), size: 12),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${pub["views"]}',
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: Color(0xFF1D97D4),
+                    Text('$likeCount',
+                        style: const TextStyle(color: Colors.white)),
+                    IconButton(
+                      icon: const Icon(Icons.comment, color: Colors.white),
+                      onPressed: () => _openBottomSheet(const CommentDrawer()),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFF1D97D4),
+                    Text('$commentCount',
+                        style: const TextStyle(color: Colors.white)),
+                    GestureDetector(
+                      onTap: () => _openBottomSheet(const ShareDrawer()),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: SvgPicture.asset(
+                          'assets/images/share_icon.svg',
+                          width: 25,
+                          height: 25,
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Text(
-                    "View",
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: Color(0xFF1D97D4),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: 50,
-          right: 5,
-          child: Column(
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.thumb_up,
-                  size: 28,
-                  color:
-                      pub["isLiked"] ? const Color(0xFF1D97D4) : Colors.white,
-                ),
-                onPressed: () => _toggleLike(pub),
-              ),
-              Text(
-                '${pub["likes"]}',
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 8),
-              IconButton(
-                icon: const Icon(Icons.comment, size: 28, color: Colors.white),
-                onPressed: () => _openCommentDrawer(context),
-              ),
-              Text(
-                '${pub["comments"]}',
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => _openShareDrawer(context),
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: SvgPicture.asset(
-                    'assets/images/share_icon.svg',
-                    width: 25,
-                    height: 25,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${pub["shares"]}',
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 18,
-                  color: Colors.white,
+                    Text('$shareCount',
+                        style: const TextStyle(color: Colors.white)),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          children: [
-            for (int i = 0; i < _publications.length; i++) ...[
-              _buildImage(_publications[i]),
-              if (i == 0) _buildAdvertisementBox(),
-            ],
-          ],
-        ),
+      body: Consumer<PublicationsProvider>(
+        builder: (context, provider, _) {
+          if (provider.isLoading) {
+            return _buildShimmer();
+          }
+
+          final publications = provider.publicationList?.data;
+          if (publications == null || publications.isEmpty) {
+            return const Center(child: Text('No publications found'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            physics: const BouncingScrollPhysics(),
+            itemCount: publications.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 1 && publications.length > 1) {
+                return Column(
+                  children: [
+                    _buildPublicationItem(publications[0]),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AdvertisementScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF797979),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Advertisements',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              final pubIndex = index > 1 ? index - 1 : index;
+              if (pubIndex < publications.length) {
+                return _buildPublicationItem(publications[pubIndex]);
+              }
+
+              return const SizedBox.shrink(); // safety fallback
+            },
+          );
+        },
       ),
     );
   }
-
-  Future<void> getPublicationsData(BuildContext context, String token) async {
-    final publicationsProvider = Provider.of<PublicationsProvider>(context, listen: false);
-    await publicationsProvider.getPublications(context, token);
-  }
 }
-
-
-
-
-
-

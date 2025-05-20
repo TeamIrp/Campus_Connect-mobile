@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+PublicationsList publicationsListFromJson(String str) => PublicationsList.fromJson(json.decode(str));
+
+String publicationsListToJson(PublicationsList data) => json.encode(data.toJson());
+
 class PublicationsList {
   final bool? status;
   final int? statusCode;
   final String? message;
-  final List<PublicationsDatum>? data;
+  final List<PublicationDatum>? data;
   final String? errorMsg;
   final bool? isError;
 
@@ -17,37 +21,27 @@ class PublicationsList {
     this.isError,
   });
 
-  factory PublicationsList.fromRawJson(String str) =>
-      PublicationsList.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory PublicationsList.fromJson(Map<String, dynamic> json) =>
-      PublicationsList(
-        status: json["status"],
-        statusCode: json["status_Code"],
-        message: json["message"],
-        data: json["data"] == null
-            ? []
-            : List<PublicationsDatum>.from(
-                json["data"]!.map((x) => PublicationsDatum.fromJson(x))),
-      );
+  factory PublicationsList.fromJson(Map<String, dynamic> json) => PublicationsList(
+    status: json["status"],
+    statusCode: json["status_Code"],
+    message: json["message"],
+    data: json["data"] == null ? [] : List<PublicationDatum>.from(json["data"]!.map((x) => PublicationDatum.fromJson(x))),
+  );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
-        "status_Code": statusCode,
-        "message": message,
-        "data": data == null
-            ? []
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
-      };
+    "status": status,
+    "status_Code": statusCode,
+    "message": message,
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+  };
 }
 
-class PublicationsDatum {
+class PublicationDatum {
   final int? id;
+  final String? publicationimage;
   final String? publicationTitle;
   final DateTime? publicationDate;
-  final PublicationCategory? publicationCategory;
+  final String? publicationCategory;
   final String? publicationDescription;
   final String? locationName;
   final String? latitude;
@@ -55,10 +49,10 @@ class PublicationsDatum {
   final int? isActive;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final Publicationimage? publicationimage;
 
-  PublicationsDatum({
+  PublicationDatum({
     this.id,
+    this.publicationimage,
     this.publicationTitle,
     this.publicationDate,
     this.publicationCategory,
@@ -69,199 +63,35 @@ class PublicationsDatum {
     this.isActive,
     this.createdAt,
     this.updatedAt,
-    this.publicationimage,
   });
 
-  factory PublicationsDatum.fromRawJson(String str) =>
-      PublicationsDatum.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory PublicationsDatum.fromJson(Map<String, dynamic> json) =>
-      PublicationsDatum(
-        id: json["id"],
-        publicationTitle: json["publication_title"],
-        publicationDate: json["publication_date"] == null
-            ? null
-            : DateTime.parse(json["publication_date"]),
-        publicationCategory:
-            publicationCategoryValues.map[json["publication_category"]]!,
-        publicationDescription: json["publication_description"],
-        locationName: json["location_name"],
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        isActive: json["isActive"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-        publicationimage: publicationimageValues.map[json["publicationimage"]]!,
-      );
+  factory PublicationDatum.fromJson(Map<String, dynamic> json) => PublicationDatum(
+    id: json["id"],
+    publicationimage: json["publicationimage"],
+    publicationTitle: json["publication_title"],
+    publicationDate: json["publication_date"] == null ? null : DateTime.parse(json["publication_date"]),
+    publicationCategory: json["publication_category"],
+    publicationDescription: json["publication_description"],
+    locationName: json["location_name"],
+    latitude: json["latitude"],
+    longitude: json["longitude"],
+    isActive: json["isActive"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "publication_title": publicationTitle,
-        "publication_date":
-            "${publicationDate!.year.toString().padLeft(4, '0')}-${publicationDate!.month.toString().padLeft(2, '0')}-${publicationDate!.day.toString().padLeft(2, '0')}",
-        "publication_category":
-            publicationCategoryValues.reverse[publicationCategory],
-        "publication_description": publicationDescription,
-        "location_name": locationName,
-        "latitude": latitude,
-        "longitude": longitude,
-        "isActive": isActive,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-        "publicationimage": publicationimageValues.reverse[publicationimage],
-      };
+    "id": id,
+    "publicationimage": publicationimage,
+    "publication_title": publicationTitle,
+    "publication_date": "${publicationDate!.year.toString().padLeft(4, '0')}-${publicationDate!.month.toString().padLeft(2, '0')}-${publicationDate!.day.toString().padLeft(2, '0')}",
+    "publication_category": publicationCategory,
+    "publication_description": publicationDescription,
+    "location_name": locationName,
+    "latitude": latitude,
+    "longitude": longitude,
+    "isActive": isActive,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+  };
 }
-
-enum PublicationCategory { EVENTS, NEWS }
-
-final publicationCategoryValues = EnumValues(
-    {"Events": PublicationCategory.EVENTS, "News": PublicationCategory.NEWS});
-
-enum Publicationimage { UPLOADS_USERS_USER_681_B5_DBC1_A18_F_JPG }
-
-final publicationimageValues = EnumValues({
-  "uploads/users/user_681b5dbc1a18f.jpg":
-      Publicationimage.UPLOADS_USERS_USER_681_B5_DBC1_A18_F_JPG
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
-}
-
-
-
-
-
-// import 'dart:convert';
-//
-// PublicationsList publicationsListFromJson(String str) => PublicationsList.fromJson(json.decode(str));
-//
-// String publicationsListToJson(PublicationsList data) => json.encode(data.toJson());
-//
-// class PublicationsList {
-//   bool status;
-//   int statusCode;
-//   String message;
-//   List<PublicationsDatum> data;
-//   final String? errorMsg;
-//   final bool? isError;
-//
-//   PublicationsList({
-//     required this.status,
-//     required this.statusCode,
-//     required this.message,
-//     required this.data,
-//     this.errorMsg,
-//     this.isError,
-//   });
-//
-//   factory PublicationsList.fromJson(Map<String, dynamic> json) => PublicationsList(
-//     status: json["status"],
-//     statusCode: json["status_Code"],
-//     message: json["message"],
-//     data: List<PublicationsDatum>.from(json["data"].map((x) => PublicationsDatum.fromJson(x))),
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "status": status,
-//     "status_Code": statusCode,
-//     "message": message,
-//     "data": List<dynamic>.from(data.map((x) => x.toJson())),
-//   };
-// }
-//
-// class PublicationsDatum {
-//   int id;
-//   String publicationTitle;
-//   DateTime publicationDate;
-//   PublicationCategory publicationCategory;
-//   String publicationDescription;
-//   String locationName;
-//   String latitude;
-//   String longitude;
-//   int isActive;
-//   DateTime createdAt;
-//   DateTime updatedAt;
-//   String publicationimage;
-//
-//   PublicationsDatum({
-//     required this.id,
-//     required this.publicationTitle,
-//     required this.publicationDate,
-//     required this.publicationCategory,
-//     required this.publicationDescription,
-//     required this.locationName,
-//     required this.latitude,
-//     required this.longitude,
-//     required this.isActive,
-//     required this.createdAt,
-//     required this.updatedAt,
-//     required this.publicationimage,
-//   });
-//
-//   factory PublicationsDatum.fromJson(Map<String, dynamic> json) => PublicationsDatum(
-//     id: json["id"],
-//     publicationTitle: json["publication_title"],
-//     publicationDate: DateTime.parse(json["publication_date"]),
-//     publicationCategory: publicationCategoryValues.map[json["publication_category"]]!,
-//     publicationDescription: json["publication_description"],
-//     locationName: json["location_name"],
-//     latitude: json["latitude"],
-//     longitude: json["longitude"],
-//     isActive: json["isActive"],
-//     createdAt: DateTime.parse(json["created_at"]),
-//     updatedAt: DateTime.parse(json["updated_at"]),
-//     publicationimage: json["publicationimage"],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "id": id,
-//     "publication_title": publicationTitle,
-//     "publication_date": "${publicationDate.year.toString().padLeft(4, '0')}-${publicationDate.month.toString().padLeft(2, '0')}-${publicationDate.day.toString().padLeft(2, '0')}",
-//     "publication_category": publicationCategoryValues.reverse[publicationCategory],
-//     "publication_description": publicationDescription,
-//     "location_name": locationName,
-//     "latitude": latitude,
-//     "longitude": longitude,
-//     "isActive": isActive,
-//     "created_at": createdAt.toIso8601String(),
-//     "updated_at": updatedAt.toIso8601String(),
-//     "publicationimage": publicationimage,
-//   };
-// }
-//
-// enum PublicationCategory {
-//   EVENTS,
-//   NEWS
-// }
-//
-// final publicationCategoryValues = EnumValues({
-//   "Events": PublicationCategory.EVENTS,
-//   "News": PublicationCategory.NEWS
-// });
-//
-// class EnumValues<T> {
-//   Map<String, T> map;
-//   late Map<T, String> reverseMap;
-//
-//   EnumValues(this.map);
-//
-//   Map<T, String> get reverse {
-//     reverseMap = map.map((k, v) => MapEntry(v, k));
-//     return reverseMap;
-//   }
-// }

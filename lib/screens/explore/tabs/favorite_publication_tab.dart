@@ -64,11 +64,11 @@ class _FavoritePublicationTabState extends State<FavoritePublicationTab> {
     );
   }
 
-  void _navigateToDetails(PublicationsDatum publication) {
+  void _navigateToDetails(PublicationDatum publication) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PublicationDetailsScreen(),
+        builder: (context) => PublicationDetailsScreen(publication: publication,),
       ),
     );
   }
