@@ -978,6 +978,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
   late final AnimationController _overlayController;
   late final Animation<Offset> _drawerAnimation;
   bool _showOverlay = false;
+  static const String _baseUrl = "https://campusconnect-web.irpinnovative.com/";
 
   @override
   void initState() {
@@ -1009,7 +1010,7 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
   Widget buildProfileDetails() {
     final data = widget.profile;
     final imageUrl = data.profilePicture?.isNotEmpty == true
-        ? data.profilePicture!.first.picture!
+        ? _baseUrl + (data.profilePicture!.first.picture ?? '')
         : '';
 
     return Stack(
@@ -1020,7 +1021,8 @@ class _PageDetailsScreenState extends State<PageDetailsScreen> with SingleTicker
           height: MediaQuery.of(context).size.height * .66,
           child: imageUrl.isNotEmpty
               ? Image.network(imageUrl, fit: BoxFit.cover)
-              : Image.asset('assets/images/sample_image1.png', fit: BoxFit.cover),
+              : Image.asset('assets/images/sample_image1.png',
+              fit: BoxFit.cover),
         ),
         // Top bar
         SafeArea(

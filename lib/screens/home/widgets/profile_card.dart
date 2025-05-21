@@ -515,6 +515,10 @@
 //   }
 // }
 
+
+
+
+
 import 'package:flutter/material.dart';
 import 'package:campus_connect/models/home_model.dart';
 import 'package:campus_connect/providers/home_provider.dart';
@@ -536,7 +540,7 @@ class ProfileCard extends StatefulWidget {
 
 class _ProfileCardState extends State<ProfileCard> {
   final PageController _controller = PageController(viewportFraction: 0.95);
-  static const String _baseImageUrl = "https://campusconnect-web.irpinnovative.com/";
+  static const String _baseUrl = "https://campusconnect-web.irpinnovative.com/";
 
   @override
   void initState() {
@@ -578,7 +582,7 @@ class _ProfileCardState extends State<ProfileCard> {
 
   Widget _buildProfileCard(HomeData data) {
     final imageUrl = data.profilePicture?.isNotEmpty == true
-        ? _baseImageUrl + (data.profilePicture!.first.picture ?? '')
+        ? _baseUrl + (data.profilePicture!.first.picture ?? '')
         : '';
 
     return GestureDetector(
